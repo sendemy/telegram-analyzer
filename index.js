@@ -1,7 +1,3 @@
-// import ChartDataLabels from './chartjs-plugin-datalabels.min.js'
-// import { Chart } from './node_module/schart.js/dist/chart.cjs'
-// Chart.register(ChartDataLabels)
-
 const container = document.querySelector('.container')
 const mainContainer = document.querySelector('.main-container')
 const personsContainer = document.querySelector('.persons-container')

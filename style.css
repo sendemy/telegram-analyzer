@@ -9,10 +9,15 @@ body {
 	line-height: 1rem;
 }
 
-.main-container {
+.main-container,
+.info-container {
 	display: flex;
 	justify-content: center;
 	text-align: center;
+}
+
+.info-container {
+	margin: 2rem 0;
 }
 
 .persons-container {
@@ -51,8 +56,6 @@ body {
 .input-container {
 	display: grid;
 	justify-content: center;
-	margin: 2rem 0;
-	margin-top: 4rem;
 	margin-bottom: 4rem;
 }
 
