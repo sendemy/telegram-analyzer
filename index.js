@@ -22,148 +22,9 @@ const colors = [
 	'#B0E0E6',
 	'#7CFC00',
 	'#000000',
-	'#9370DB',
-	'#F08080',
-	'#00008B',
-	'#87CEFA',
-	'#F4A460',
-	'#D3D3D3',
-	'#CD853F',
-	'#6A5ACD',
-	'#FF0000',
-	'#00FA9A',
-	'#7FFFD4',
-	'#8B4513',
-	'#FF7F50',
-	'#A9A9A9',
-	'#006400',
-	'#8B008B',
-	'#A0522D',
-	'#191970',
-	'#A9A9A9',
-	'#7FFF00',
-	'#708090',
-	'#6B8E23',
-	'#008080',
-	'#FFE4C4',
-	'#FFFFFF',
-	'#FFD700',
-	'#DB7093',
-	'#00FF7F',
-	'#DDA0DD',
-	'#3CB371',
-	'#F0FFF0',
-	'#87CEEB',
-	'#BC8F8F',
-	'#FFFAFA',
-	'#D2B48C',
-	'#5F9EA0',
-	'#F0FFFF',
-	'#FF1493',
-	'#98FB98',
-	'#708090',
-	'#F5F5DC',
-	'#90EE90',
-	'#9ACD32',
-	'#2E8B57',
-	'#FF00FF',
-	'#800000',
-	'#4682B4',
-	'#228B22',
-	'#FFDAB9',
-	'#808000',
-	'#FFA500',
-	'#C71585',
-	'#2F4F4F',
-	'#40E0D0',
-	'#FDF5E6',
-	'#663399',
-	'#F5FFFA',
-	'#778899',
-	'#D3D3D3',
-	'#FF4500',
-	'#00FF00',
-	'#FFFACD',
-	'#FFF0F5',
-	'#E0FFFF',
-	'#BA55D3',
-	'#DC143C',
-	'#DAA520',
-	'#E9967A',
-	'#BDB76B',
-	'#FFA07A',
-	'#483D8B',
-	'#FFFFF0',
-	'#32CD32',
-	'#6495ED',
-	'#0000FF',
-	'#DEB887',
-	'#B0C4DE',
-	'#B22222',
-	'#D8BFD8',
-	'#DCDCDC',
-	'#FAF0E6',
-	'#FFF8DC',
-	'#2F4F4F',
-	'#FAEBD7',
-	'#9932CC',
-	'#ADD8E6',
-	'#FFFFE0',
-	'#4B0082',
-	'#C0C0C0',
-	'#48D1CC',
-	'#008B8B',
-	'#EE82EE',
-	'#808080',
-	'#8B0000',
-	'#AFEEEE',
-	'#A52A2A',
-	'#20B2AA',
-	'#DA70D6',
-	'#CD5C5C',
-	'#FA8072',
-	'#FFE4E1',
-	'#FFDEAD',
-	'#F8F8FF',
-	'#FAFAD2',
-	'#F0F8FF',
-	'#FFEFD5',
-	'#FF69B4',
-	'#FF00FF',
-	'#8A2BE2',
-	'#0000CD',
-	'#FFFAF0',
-	'#FFF5EE',
-	'#ADFF2F',
-	'#4169E1',
-	'#9400D3',
-	'#008000',
-	'#F0E68C',
-	'#B8860B',
-	'#66CDAA',
-	'#EEE8AA',
-	'#FFB6C1',
-	'#00CED1',
-	'#F5DEB3',
-	'#FFEBCD',
-	'#FFE4B5',
-	'#00FFFF',
-	'#1E90FF',
-	'#00BFFF',
-	'#FF8C00',
-	'#F5F5F5',
-	'#696969',
-	'#7B68EE',
-	'#D2691E',
-	'#800080',
-	'#8FBC8F',
-	'#000080',
-	'#556B2F',
-	'#FF6347',
-	'#FFFF00',
-	'#778899',
 ]
 
+// file reader init
 ;(function () {
 	function onChange(event) {
 		var reader = new FileReader()
@@ -172,16 +33,18 @@ const colors = [
 	}
 
 	function onReaderLoad(event) {
-		startAnalyzing(JSON.parse(event.target.result))
+		run(JSON.parse(event.target.result))
 	}
 
 	document.getElementById('file').addEventListener('change', onChange)
 })()
 
-function startAnalyzing(data) {
+function run(data) {
+	// clearing divs
 	personsContainer.replaceChildren()
 	mainContainer.replaceChildren()
 	wordsContainer.replaceChildren()
+
 	const nicknames = []
 	const messagesNicknamesObj = {}
 	const wordsNicknamesObj = {}
@@ -190,16 +53,46 @@ function startAnalyzing(data) {
 	const gifsNicknamesObj = {}
 	const chartObjects = []
 
-	// --------------------------- DIVS WITH DATA CREATION ALGORITHM ---------------------------
-
+	// getting nicknames
 	for (const msg of data.messages) {
 		if ('from' in msg && !nicknames.includes(msg.from)) {
 			nicknames.push(msg.from)
 		}
 	}
 
-	const totalStats = getGlobalStats(data)
+	const totalStats = getGlobalStats(data.messages)
 
+	createTotalStatsDiv(totalStats, nicknames)
+
+	for (const nickname of nicknames) {
+		const personStats = getPersonStats(data.messages, nickname)
+
+		messagesNicknamesObj[nickname] = personStats.messages
+		wordsNicknamesObj[nickname] = personStats.words
+		symbolsNicknamesObj[nickname] = personStats.symbols
+		stickersNicknamesObj[nickname] = personStats.stickers
+		gifsNicknamesObj[nickname] = personStats.gifs
+
+		createPersonDiv(personStats, totalStats, nickname)
+	}
+
+	chartObjects.push(messagesNicknamesObj)
+	chartObjects.push(wordsNicknamesObj)
+	chartObjects.push(symbolsNicknamesObj)
+	chartObjects.push(stickersNicknamesObj)
+	chartObjects.push(gifsNicknamesObj)
+
+	displayTopWords(data.messages)
+
+	const keyWords = ['messages', 'words', 'symbols', 'stickers', 'gifs']
+
+	// setting up charts
+	for (let i = 0; i < chartObjects.length; i++) {
+		createChart(chartObjects[i], keyWords[i], totalStats[keyWords[i]])
+	}
+}
+
+function createTotalStatsDiv(totalStats, nicknames) {
 	const totalDiv = document.createElement('div')
 	const totalHdr = document.createElement('h2')
 	const totalPar1 = document.createElement('p')
@@ -228,345 +121,160 @@ function startAnalyzing(data) {
 	totalDiv.appendChild(totalPar5)
 
 	mainContainer.appendChild(totalDiv)
+}
 
-	for (const nickname of nicknames) {
-		const personStats = getPersonStats(data, nickname)
-		messagesNicknamesObj[nickname] = personStats.messages
-		wordsNicknamesObj[nickname] = personStats.words
-		symbolsNicknamesObj[nickname] = personStats.symbols
-		stickersNicknamesObj[nickname] = personStats.stickers
-		gifsNicknamesObj[nickname] = personStats.gifs
+function createPersonDiv(personStats, totalStats, nickname) {
+	const personDiv = document.createElement('div')
+	personDiv.className = 'person-stats'
+	const personStatsWrapper = document.createElement('div')
+	personStatsWrapper.className = 'person-stats__wrapper'
+	const personStatsDigits = document.createElement('div')
+	personStatsDigits.className = 'person-stats__digits'
+	const personStatsPercent = document.createElement('div')
+	personStatsPercent.className = 'person-stats__percent'
 
-		const personDiv = document.createElement('div')
-		personDiv.className = 'person-stats'
-		const personStatsWrapper = document.createElement('div')
-		personStatsWrapper.className = 'person-stats__wrapper'
-		const personStatsDigits = document.createElement('div')
-		personStatsDigits.className = 'person-stats__digits'
-		const personStatsPercent = document.createElement('div')
-		personStatsPercent.className = 'person-stats__percent'
+	const personHdr = document.createElement('h3')
+	const personPar1 = document.createElement('p')
+	const personPar2 = document.createElement('p')
+	const personPar3 = document.createElement('p')
+	const personPar4 = document.createElement('p')
+	const personPar5 = document.createElement('p')
+	personHdr.textContent = `In numbers`
+	personPar1.textContent = `Messages: ${personStats.messages}`
+	personPar2.textContent = `Words: ${personStats.words}`
+	personPar3.textContent = `Symbols: ${personStats.symbols}`
+	personPar4.textContent = `Stickers: ${personStats.stickers}`
+	personPar5.textContent = `Gifs: ${personStats.gifs}`
+	personStatsDigits.appendChild(personHdr)
+	personStatsDigits.appendChild(personPar1)
+	personStatsDigits.appendChild(personPar2)
+	personStatsDigits.appendChild(personPar3)
+	personStatsDigits.appendChild(personPar4)
+	personStatsDigits.appendChild(personPar5)
 
-		const personHdr = document.createElement('h3')
-		const personPar1 = document.createElement('p')
-		const personPar2 = document.createElement('p')
-		const personPar3 = document.createElement('p')
-		const personPar4 = document.createElement('p')
-		const personPar5 = document.createElement('p')
-		personHdr.textContent = `In numbers`
-		personPar1.textContent = `Messages: ${personStats.messages}`
-		personPar2.textContent = `Words: ${personStats.words}`
-		personPar3.textContent = `Symbols: ${personStats.symbols}`
-		personPar4.textContent = `Stickers: ${personStats.stickers}`
-		personPar5.textContent = `Gifs: ${personStats.gifs}`
-		personStatsDigits.appendChild(personHdr)
-		personStatsDigits.appendChild(personPar1)
-		personStatsDigits.appendChild(personPar2)
-		personStatsDigits.appendChild(personPar3)
-		personStatsDigits.appendChild(personPar4)
-		personStatsDigits.appendChild(personPar5)
+	const personHdrPercent = document.createElement('h3')
+	const personPar1Percent = document.createElement('p')
+	const personPar2Percent = document.createElement('p')
+	const personPar3Percent = document.createElement('p')
+	const personPar4Percent = document.createElement('p')
+	const personPar5Percent = document.createElement('p')
+	personHdrPercent.textContent = `In percent`
+	personPar1Percent.textContent = `Messages: ${
+		totalStats.messages !== 0
+			? `${((personStats.messages * 100) / totalStats.messages).toFixed(2)}%`
+			: '00.00%'
+	}`
+	personPar2Percent.textContent = `Words: ${
+		totalStats.words !== 0
+			? `${((personStats.words * 100) / totalStats.words).toFixed(2)}%`
+			: '00.00%'
+	}`
+	personPar3Percent.textContent = `Symbols: ${
+		totalStats.symbols !== 0
+			? `${((personStats.symbols * 100) / totalStats.symbols).toFixed(2)}%`
+			: '00.00%'
+	}`
+	personPar4Percent.textContent = `Stickers: ${
+		totalStats.stickers !== 0
+			? `${((personStats.stickers * 100) / totalStats.stickers).toFixed(2)}%`
+			: '00.00%'
+	}`
+	personPar5Percent.textContent = `Gifs: ${
+		totalStats.gifs !== 0
+			? `${((personStats.gifs * 100) / totalStats.gifs).toFixed(2)}%`
+			: '00.00%'
+	}`
+	personStatsPercent.appendChild(personHdrPercent)
+	personStatsPercent.appendChild(personPar1Percent)
+	personStatsPercent.appendChild(personPar2Percent)
+	personStatsPercent.appendChild(personPar3Percent)
+	personStatsPercent.appendChild(personPar4Percent)
+	personStatsPercent.appendChild(personPar5Percent)
 
-		const personHdrPercent = document.createElement('h3')
-		const personPar1Percent = document.createElement('p')
-		const personPar2Percent = document.createElement('p')
-		const personPar3Percent = document.createElement('p')
-		const personPar4Percent = document.createElement('p')
-		const personPar5Percent = document.createElement('p')
-		personHdrPercent.textContent = `In percent`
-		personPar1Percent.textContent = `Messages: ${
-			totalStats.messages !== 0
-				? `${((personStats.messages * 100) / totalStats.messages).toFixed(2)}%`
-				: '00.00%'
-		}`
-		personPar2Percent.textContent = `Words: ${
-			totalStats.words !== 0
-				? `${((personStats.words * 100) / totalStats.words).toFixed(2)}%`
-				: '00.00%'
-		}`
-		personPar3Percent.textContent = `Symbols: ${
-			totalStats.symbols !== 0
-				? `${((personStats.symbols * 100) / totalStats.symbols).toFixed(2)}%`
-				: '00.00%'
-		}`
-		personPar4Percent.textContent = `Stickers: ${
-			totalStats.stickers !== 0
-				? `${((personStats.stickers * 100) / totalStats.stickers).toFixed(2)}%`
-				: '00.00%'
-		}`
-		personPar5Percent.textContent = `Gifs: ${
-			totalStats.gifs !== 0
-				? `${((personStats.gifs * 100) / totalStats.gifs).toFixed(2)}%`
-				: '00.00%'
-		}`
-		personStatsPercent.appendChild(personHdrPercent)
-		personStatsPercent.appendChild(personPar1Percent)
-		personStatsPercent.appendChild(personPar2Percent)
-		personStatsPercent.appendChild(personPar3Percent)
-		personStatsPercent.appendChild(personPar4Percent)
-		personStatsPercent.appendChild(personPar5Percent)
+	const hdr = document.createElement('h2')
+	hdr.textContent = `Stats for ${nickname}`
 
-		const hdr = document.createElement('h2')
-		hdr.textContent = `Stats for ${nickname}`
+	personStatsWrapper.appendChild(personStatsDigits)
+	personStatsWrapper.appendChild(personStatsPercent)
 
-		personStatsWrapper.appendChild(personStatsDigits)
-		personStatsWrapper.appendChild(personStatsPercent)
+	personDiv.appendChild(hdr)
+	personDiv.appendChild(personStatsWrapper)
 
-		personDiv.appendChild(hdr)
-		personDiv.appendChild(personStatsWrapper)
+	personsContainer.appendChild(personDiv)
+}
 
-		personsContainer.appendChild(personDiv)
+function createChart(chartObject, keyWord, totalStat) {
+	const mainChartObj = {
+		type: 'pie',
+		data: {
+			labels: [],
+			datasets: [
+				{
+					data: [],
+					backgroundColor: [],
+					borderWidth: 0.5,
+					borderColor: '#ddd',
+				},
+			],
+		},
+		options: {
+			title: {
+				display: true,
+				text: keyWord.charAt(0).toUpperCase() + keyWord.slice(1),
+				position: 'top',
+				fontSize: 24,
+				fontColor: '#111',
+				padding: 20,
+			},
+			legend: {
+				display: true,
+				position: 'bottom',
+				labels: {
+					boxWidth: 20,
+					fontColor: '#111',
+					padding: 15,
+					fontSize: 16,
+				},
+			},
+			tooltips: {
+				enabled: true,
+			},
+			plugins: {},
+		},
 	}
 
-	chartObjects.push(messagesNicknamesObj)
-	chartObjects.push(wordsNicknamesObj)
-	chartObjects.push(symbolsNicknamesObj)
-	chartObjects.push(stickersNicknamesObj)
-	chartObjects.push(gifsNicknamesObj)
-
-	// --------------------------- TOP WORDS APPEARANCE ALGORITHM ---------------------------
-
-	const wordsObj = sortData(data)
-
-	const wordsDiv = document.createElement('div')
-	wordsDiv.className = 'words'
-
-	const wordsHdr = document.createElement('h2')
-	wordsHdr.textContent = 'Most used words'
-	wordsDiv.appendChild(wordsHdr)
-
-	Object.entries(wordsObj).forEach(([key, value], ind) => {
-		const p = document.createElement('p')
-		p.textContent = `${ind + 1}. ${key} - ${value}`
-
-		wordsDiv.appendChild(p)
+	// filling up chart data for every user
+	Object.entries(chartObject).forEach(([key, value], ind) => {
+		mainChartObj.data.labels.push(key)
+		mainChartObj.data.datasets[0].data.push(
+			((value * 100) / totalStat).toFixed(2)
+		)
+		mainChartObj.data.datasets[0].backgroundColor.push(
+			colors[ind % colors.length]
+		)
 	})
 
-	wordsContainer.appendChild(wordsDiv)
+	const chartWrapper = document.createElement('div')
+	chartWrapper.className = 'chart-wrapper'
+	const ctx = document.createElement('canvas')
+	ctx.getContext('2d')
+	ctx.className = `${keyWord}-chart`
+	chartWrapper.appendChild(ctx)
+	chartContainer.appendChild(chartWrapper)
 
-	// --------------------------- AUTOMATIC CHART CREATION ALGORITHM ---------------------------
-
-	const keyWords = ['messages', 'words', 'symbols', 'stickers', 'gifs']
-	for (let i = 0; i < chartObjects.length; i++) {
-		const mainChartObj = {
-			type: 'pie',
-			data: {
-				labels: [],
-				datasets: [
-					{
-						data: [],
-						backgroundColor: [],
-						borderWidth: 0.5,
-						borderColor: '#ddd',
-					},
-				],
-			},
-			options: {
-				title: {
-					display: true,
-					text: '',
-					position: 'top',
-					fontSize: 24,
-					fontColor: '#111',
-					padding: 20,
-				},
-				legend: {
-					display: true,
-					position: 'bottom',
-					labels: {
-						boxWidth: 20,
-						fontColor: '#111',
-						padding: 15,
-						fontSize: 16,
-					},
-				},
-				tooltips: {
-					enabled: true,
-				},
-				plugins: {},
-			},
-		}
-
-		Object.entries(chartObjects[i]).forEach(([key, value], ind) => {
-			mainChartObj.data.labels = [...mainChartObj.data.labels, key]
-			mainChartObj.data.datasets[0].data = [
-				...mainChartObj.data.datasets[0].data,
-				((value * 100) / totalStats[keyWords[i]]).toFixed(2),
-			]
-			mainChartObj.data.datasets[0].backgroundColor = [
-				...mainChartObj.data.datasets[0].backgroundColor,
-				colors[ind < colors.length ? ind : ind - colors.length],
-			]
-			mainChartObj.options.title.text =
-				keyWords[i].charAt(0).toUpperCase() + keyWords[i].slice(1).toLowerCase()
-		})
-
-		const chartWrapper = document.createElement('div')
-		chartWrapper.className = 'chart-wrapper'
-		const ctx = document.createElement('canvas')
-		ctx.getContext('2d')
-		ctx.className = `${keyWords[i]}-chart`
-		chartWrapper.appendChild(ctx)
-		chartContainer.appendChild(chartWrapper)
-
-		new Chart(ctx, mainChartObj)
-	}
+	new Chart(ctx, mainChartObj)
 }
 
-function getMsgCount(data) {
-	return data.messages.length
-}
+// utility functions
 
-function getPersonMsgCount(data, nickname) {
-	let msgCount = 0
-
-	for (const msg of data.messages) {
-		if (msg.from == nickname) {
-			msgCount += 1
-		}
-	}
-
-	return msgCount
-}
-
-function getWordsCount(data) {
-	let wordsCounter = 0
-
-	for (const msg of data.messages) {
-		if (msg.text != '' && typeof msg.text == 'string') {
-			wordsCounter += msg.text.split(' ').length
-		} else if (typeof msg.text == 'object') {
-			Object.entries(msg).forEach(([key, value], ind) => {
-				if (msg.text != '' && typeof msg.key == 'string') {
-					wordsCounter += msg.key.split(' ').length
-				}
-			})
-		}
-	}
-
-	return wordsCounter
-}
-
-function getPersonWordsCount(data, nickname) {
-	let wordsCounter = 0
-
-	for (const msg of data.messages) {
-		if (msg.text != '' && typeof msg.text == 'string' && msg.from == nickname) {
-			wordsCounter += msg.text.split(' ').length
-		} else if (typeof msg.text == 'object') {
-			Object.entries(msg).forEach(([key, value], ind) => {
-				if (
-					msg.text != '' &&
-					typeof msg.key == 'string' &&
-					msg.from == nickname
-				) {
-					wordsCounter += msg.key.split(' ').length
-				}
-			})
-		}
-	}
-
-	return wordsCounter
-}
-
-function getSymbolsCount(data) {
-	let symbolsCounter = 0
-
-	for (const msg of data.messages) {
-		if (typeof msg.text == 'string') {
-			symbolsCounter += msg.text.length
-		} else if (typeof msg.text == 'object') {
-			Object.entries(msg).forEach(([key, value], ind) => {
-				if (typeof msg.key == 'string') {
-					symbolsCounter += msg.key.length
-				}
-			})
-		}
-	}
-
-	return symbolsCounter
-}
-
-function getPersonSymbolsCount(data, nickname) {
-	let symbolsCounterer = 0
-
-	for (const msg of data.messages) {
-		if (typeof msg.text == 'string' && msg.from == nickname) {
-			symbolsCounterer += msg.text.length
-		} else if (typeof msg.text == 'object' && msg.from == nickname) {
-			Object.entries(msg).forEach(([key, value], ind) => {
-				if (typeof msg.key == 'string') {
-					symbolsCounterer += msg.key.length
-				}
-			})
-		}
-	}
-
-	return symbolsCounterer
-}
-
-function getStickersCount(data) {
-	let stickersCounter = 0
-
-	for (const msg of data.messages) {
-		if ('media_type' in msg && msg.media_type == 'sticker') {
-			stickersCounter += 1
-		}
-	}
-
-	return stickersCounter
-}
-
-function getPersonStickersCount(data, nickname) {
-	let stickersCounter = 0
-
-	for (const msg of data.messages) {
-		if (
-			'media_type' in msg &&
-			msg.media_type == 'sticker' &&
-			msg.from == nickname
-		) {
-			stickersCounter += 1
-		}
-	}
-
-	return stickersCounter
-}
-
-function getGifsCount(data) {
-	let gifsCounter = 0
-
-	for (const msg of data.messages) {
-		if ('media_type' in msg && msg.media_type == 'animation') {
-			gifsCounter += 1
-		}
-	}
-
-	return gifsCounter
-}
-
-function getPersonGifsCount(data, nickname) {
-	let gifsCounter = 0
-
-	for (const msg of data.messages) {
-		if (
-			'media_type' in msg &&
-			msg.media_type == 'animation' &&
-			msg.from == nickname
-		) {
-			gifsCounter += 1
-		}
-	}
-
-	return gifsCounter
-}
-
-function getPersonStats(data, nickname) {
+function getPersonStats(messages, nickname) {
 	let personMsgCounter = 0
 	let personWordsCounter = 0
 	let personSymbolsCounter = 0
 	let personStickersCounter = 0
 	let personGifsCounter = 0
 
-	for (const msg of data.messages) {
+	for (const msg of messages) {
 		if (msg.type == 'message' && msg.from == nickname) {
 			personMsgCounter += 1
 		}
@@ -589,16 +297,6 @@ function getPersonStats(data, nickname) {
 					personWordsCounter += innerMsg.split(' ').length
 				}
 			}
-
-			// Object.entries(msg).forEach(([key, value], ind) => {
-			// 	if (
-			// 		msg.type == 'message' &&
-			// 		typeof msg[key] == 'string' &&
-			// 		msg.from == nickname
-			// 	) {
-			// 		personWordsCounter += msg[key].split(' ').length
-			// 	}
-			// })
 		}
 
 		if (
@@ -647,14 +345,14 @@ function getPersonStats(data, nickname) {
 	}
 }
 
-function getGlobalStats(data) {
+function getGlobalStats(messages) {
 	let msgCounter = 0
 	let wordsCounter = 0
 	let symbolsCounter = 0
 	let stickersCounter = 0
 	let gifsCounter = 0
 
-	for (const msg of data.messages) {
+	for (const msg of messages) {
 		if (msg.type == 'message') {
 			msgCounter += 1
 		}
@@ -675,11 +373,6 @@ function getGlobalStats(data) {
 					wordsCounter += innerMsg.split(' ').length
 				}
 			}
-			// Object.entries(msg).forEach(([key, value], ind) => {
-			// 	if (msg.text != '' && typeof msg[key] == 'string') {
-			// 		wordsCounter += msg[key].split(' ').length
-			// 	}
-			// })
 		}
 
 		if (msg.type == 'message' && typeof msg.text == 'string') {
@@ -696,11 +389,12 @@ function getGlobalStats(data) {
 			}
 		}
 
-		if ('media_type' in msg && msg.media_type == 'sticker') {
+		if (msg.hasOwnProperty('media_type') && msg.media_type == 'sticker') {
 			stickersCounter += 1
-		}
-
-		if ('media_type' in msg && msg.media_type == 'animation') {
+		} else if (
+			msg.hasOwnProperty('media_type') &&
+			msg.media_type == 'animation'
+		) {
 			gifsCounter += 1
 		}
 	}
@@ -714,32 +408,39 @@ function getGlobalStats(data) {
 	}
 }
 
-function sortData(data) {
-	const topWords = {}
-	const regex_emoji =
+function sortData(messages) {
+	// key: word, value: number of its occurrences
+	const words = {}
+
+	// regex to filter out emojis
+	const regexEmoji =
 		/[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{1F9B0}-\u{1F9B3}]/u
 
-	for (const msg of data.messages) {
+	for (const msg of messages) {
+		// if the message is a non-empty text string
 		if (
 			msg.type == 'message' &&
 			msg.text != '' &&
 			typeof msg.text == 'string'
 		) {
 			for (const word of msg.text.split(' ')) {
+				const lowerCaseWord = word.toLowerCase()
+
 				if (
-					!(word.toLowerCase() in topWords) &&
-					!regex_emoji.test(word) &&
+					!words.hasOwnProperty(lowerCaseWord) &&
+					!regexEmoji.test(word) &&
 					word != parseInt(word)
 				) {
-					topWords[word.toLowerCase()] = 1
+					words[lowerCaseWord] = 1
 				} else if (
-					word.toLowerCase() in topWords &&
-					!regex_emoji.test(word) &&
+					words.hasOwnProperty(lowerCaseWord) &&
+					!regexEmoji.test(word) &&
 					word != parseInt(word)
 				) {
-					topWords[word.toLowerCase()] += 1
+					words[lowerCaseWord] += 1
 				}
 			}
+			// if the message consists of a file/link/img etc. and has text in it
 		} else if (
 			msg.type == 'message' &&
 			msg.text != '' &&
@@ -748,18 +449,20 @@ function sortData(data) {
 			for (const innerMsg of msg.text) {
 				if (typeof innerMsg == 'string') {
 					for (const word of innerMsg.split(' ')) {
+						const lowerCaseWord = word.toLowerCase()
+
 						if (
-							!(word.toLowerCase() in topWords) &&
-							!regex_emoji.test(word) &&
+							!words.hasOwnProperty(lowerCaseWord) &&
+							!regexEmoji.test(word) &&
 							word != parseInt(word)
 						) {
-							topWords[word.toLowerCase()] = 1
+							words[lowerCaseWord] = 1
 						} else if (
-							word.toLowerCase() in topWords &&
-							!regex_emoji.test(word) &&
+							words.hasOwnProperty(lowerCaseWord) &&
+							!regexEmoji.test(word) &&
 							word != parseInt(word)
 						) {
-							topWords[word.toLowerCase()] += 1
+							words[lowerCaseWord] += 1
 						}
 					}
 				}
@@ -767,7 +470,8 @@ function sortData(data) {
 		}
 	}
 
-	const sorted = Object.entries(topWords)
+	// sorting array by the number of word occurrences
+	const sorted = Object.entries(words)
 		.sort(([, v1], [, v2]) => v2 - v1)
 		.reduce(
 			(obj, [k, v]) => ({
@@ -777,19 +481,19 @@ function sortData(data) {
 			{}
 		)
 
-	const top10Words = {}
+	const topWords = {}
 
 	Object.entries(sorted).forEach(([key, value], ind) => {
 		if (ind < 10) {
-			top10Words[key] = value
+			topWords[key] = value
 		}
 	})
 
-	return top10Words
+	return topWords
 }
 
-function getTopWords(data) {
-	const wordsObj = sortData(data)
+function displayTopWords(messages) {
+	const topWords = sortData(messages)
 
 	const wordsDiv = document.createElement('div')
 	wordsDiv.className = 'words'
@@ -798,85 +502,12 @@ function getTopWords(data) {
 	wordsHdr.textContent = 'Most used words'
 	wordsDiv.appendChild(wordsHdr)
 
-	Object.entries(wordsObj).forEach(([key, value], ind) => {
+	Object.entries(topWords).forEach(([key, value], ind) => {
 		const p = document.createElement('p')
-		p.textContent = `${ind + 1}. ${key} - ${value}`
+		p.textContent = `${ind + 1}. ${key} - ${value} time(s)`
 
 		wordsDiv.appendChild(p)
 	})
 
 	wordsContainer.appendChild(wordsDiv)
 }
-
-// const nicknames = ['Jane', 'Max', 'Dan']
-// const messages = [50, 25, 25]
-
-// const messagesChartObj = {
-// 	type: 'doughnut',
-// 	data: {
-// 		labels: [],
-// 		datasets: [
-// 			{
-// 				data: [],
-// 				backgroundColor: [],
-// 				borderWidth: 0.5,
-// 				borderColor: '#ddd',
-// 			},
-// 		],
-// 	},
-// 	options: {
-// 		title: {
-// 			display: true,
-// 			text: 'Messages',
-// 			position: 'top',
-// 			fontSize: 16,
-// 			fontColor: '#111',
-// 			padding: 20,
-// 		},
-// 		legend: {
-// 			display: true,
-// 			position: 'bottom',
-// 			labels: {
-// 				boxWidth: 20,
-// 				fontColor: '#111',
-// 				padding: 15,
-// 			},
-// 		},
-// 		tooltips: {
-// 			enabled: false,
-// 		},
-// 		plugins: {
-// 			datalabels: {
-// 				color: '#111',
-// 				textAlign: 'center',
-// 				font: {
-// 					lineHeight: 1.6,
-// 				},
-// 				formatter: function (value, ctx) {
-// 					return ctx.chart.data.labels[ctx.dataIndex] + '\n' + value + '%'
-// 				},
-// 			},
-// 		},
-// 	},
-// }
-
-// for (const nickname of nicknames) {
-// 	messagesChartObj.data.labels = [...messagesChartObj.data.labels, nickname]
-// 	messagesChartObj.data.datasets[0].data = [
-// 		...messagesChartObj.data.datasets[0].data,
-// 		33,
-// 	]
-// 	messagesChartObj.data.datasets[0].backgroundColor = [
-// 		...messagesChartObj.data.datasets[0].backgroundColor,
-// 		colors[Math.floor(Math.random() * colors.length)],
-// 	]
-// }
-
-// console.log(messagesChartObj)
-
-// function* shuffle(arr) {
-// 	arr = [...arr]
-// 	while (arr.length) yield arr.splice((Math.random() * arr.length) | 0, 1)[0]
-// }
-
-// console.log([...shuffle(colors)])
