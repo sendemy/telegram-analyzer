@@ -1,7 +1,7 @@
 const container = document.querySelector('.container')
 const mainContainer = document.querySelector('.main-container')
 const personsContainer = document.querySelector('.persons-container')
-const wordsContainer = document.querySelector('.words-container')
+const wordsContainer = document.querySelector('.top-words-container')
 const chartContainer = document.querySelector('.chart-container')
 
 const colors = [
