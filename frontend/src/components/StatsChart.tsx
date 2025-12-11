@@ -29,7 +29,8 @@ export default function StatsChart({ chartObject, chartType, totalStat }: StatsC
 			labels.push(label);
 
 			// Calculate percentage if totalStat > 0
-			const percentageValue = totalStat > 0 ? parseFloat(((value * 100) / totalStat).toFixed(2)) : 0;
+			const percentageValue =
+				totalStat > 0 ? parseFloat(((value * 100) / totalStat).toFixed(2)) : 0;
 			dataValues.push(percentageValue);
 
 			// Assign color (cycle through colors array)
@@ -130,7 +131,10 @@ export default function StatsChart({ chartObject, chartType, totalStat }: StatsC
 							},
 							footer: (tooltipItems) => {
 								if (tooltipItems.length > 0) {
-									const total = tooltipItems.reduce((sum, item) => sum + (item.raw as number), 0);
+									const total = tooltipItems.reduce(
+										(sum, item) => sum + (item.raw as number),
+										0
+									);
 									return `Total: ${total.toFixed(2)}%`;
 								}
 								return '';
@@ -179,7 +183,9 @@ export default function StatsChart({ chartObject, chartType, totalStat }: StatsC
 					<div className="chart-header">
 						<h3>{formatChartTitle(chartType)} Distribution</h3>
 						<div className="chart-summary">
-							<span className="participants-count">{Object.keys(chartObject).length} participants</span>
+							<span className="participants-count">
+								{Object.keys(chartObject).length} participants
+							</span>
 							<span className="total-count">
 								{totalStat.toLocaleString()} {chartType}
 							</span>
@@ -197,8 +203,8 @@ export default function StatsChart({ chartObject, chartType, totalStat }: StatsC
 						<div className="chart-note">
 							<small>
 								<i>
-									Legend hidden due to large number of participants. Hover over chart segments to see
-									details.
+									Legend hidden due to large number of participants. Hover over
+									chart segments to see details.
 								</i>
 							</small>
 						</div>

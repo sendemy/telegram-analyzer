@@ -60,9 +60,19 @@ export function getPersonStats(msgs: TelegramMessage[], nickname: string): Perso
 			messages += 1;
 		}
 
-		if (msg.type == 'message' && msg.text != '' && typeof msg.text == 'string' && msg.from == nickname) {
+		if (
+			msg.type == 'message' &&
+			msg.text != '' &&
+			typeof msg.text == 'string' &&
+			msg.from == nickname
+		) {
 			words += msg.text.split(' ').length;
-		} else if (msg.type == 'message' && msg.text != '' && Array.isArray(msg.text) && msg.from == nickname) {
+		} else if (
+			msg.type == 'message' &&
+			msg.text != '' &&
+			Array.isArray(msg.text) &&
+			msg.from == nickname
+		) {
 			for (const innerMsg of msg.text) {
 				if (typeof innerMsg == 'string') {
 					words += innerMsg.split(' ').length;
@@ -72,7 +82,12 @@ export function getPersonStats(msgs: TelegramMessage[], nickname: string): Perso
 
 		if (msg.type == 'message' && typeof msg.text == 'string' && msg.from == nickname) {
 			symbols += msg.text.length;
-		} else if (msg.type == 'message' && msg.text != '' && Array.isArray(msg.text) && msg.from == nickname) {
+		} else if (
+			msg.type == 'message' &&
+			msg.text != '' &&
+			Array.isArray(msg.text) &&
+			msg.from == nickname
+		) {
 			for (const innerMsg of msg.text) {
 				if (typeof innerMsg == 'string') {
 					symbols += innerMsg.length;
@@ -112,9 +127,17 @@ export function sortData(messages: TelegramMessage[]) {
 			for (const word of msg.text.split(' ')) {
 				const lowerCaseWord = word.toLowerCase();
 
-				if (!words.hasOwnProperty(lowerCaseWord) && !regexEmoji.test(word) && !isNumeric(word)) {
+				if (
+					!words.hasOwnProperty(lowerCaseWord) &&
+					!regexEmoji.test(word) &&
+					!isNumeric(word)
+				) {
 					words[lowerCaseWord] = 1;
-				} else if (words.hasOwnProperty(lowerCaseWord) && !regexEmoji.test(word) && !isNumeric(word)) {
+				} else if (
+					words.hasOwnProperty(lowerCaseWord) &&
+					!regexEmoji.test(word) &&
+					!isNumeric(word)
+				) {
 					words[lowerCaseWord] += 1;
 				}
 			}
@@ -125,9 +148,17 @@ export function sortData(messages: TelegramMessage[]) {
 					for (const word of innerMsg.split(' ')) {
 						const lowerCaseWord = word.toLowerCase();
 
-						if (!words.hasOwnProperty(lowerCaseWord) && !regexEmoji.test(word) && !isNumeric(word)) {
+						if (
+							!words.hasOwnProperty(lowerCaseWord) &&
+							!regexEmoji.test(word) &&
+							!isNumeric(word)
+						) {
 							words[lowerCaseWord] = 1;
-						} else if (words.hasOwnProperty(lowerCaseWord) && !regexEmoji.test(word) && !isNumeric(word)) {
+						} else if (
+							words.hasOwnProperty(lowerCaseWord) &&
+							!regexEmoji.test(word) &&
+							!isNumeric(word)
+						) {
 							words[lowerCaseWord] += 1;
 						}
 					}

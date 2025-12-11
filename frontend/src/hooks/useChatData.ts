@@ -1,6 +1,12 @@
 import { useState } from 'preact/hooks';
 import { getGlobalStats, getPersonStats, sortData } from '../utils/analyzers';
-import type { TelegramData, ProcessedData, GlobalStats, PersonStats, TelegramMessage } from '../types/telegram';
+import type {
+	TelegramData,
+	ProcessedData,
+	GlobalStats,
+	PersonStats,
+	TelegramMessage,
+} from '../types/telegram';
 
 export function useChatData() {
 	const [processedData, setProcessedData] = useState<ProcessedData | null>(null);
@@ -19,7 +25,9 @@ export function useChatData() {
 			const totalStats = getGlobalStats(rawData.messages);
 
 			// Step 3: Calculate per-person statistics
-			const personsStats: PersonStats[] = nicknames.map((nickname) => getPersonStats(rawData.messages, nickname));
+			const personsStats: PersonStats[] = nicknames.map((nickname) =>
+				getPersonStats(rawData.messages, nickname)
+			);
 
 			// Step 4: Prepare chart data objects
 			const chartObjects = prepareChartObjects(personsStats, nicknames);

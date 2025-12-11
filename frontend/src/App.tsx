@@ -90,7 +90,8 @@ export default function App() {
 						<li>Upload the JSON file below</li>
 					</ol>
 					<div className="info-note">
-						<strong>Note:</strong> Your data is processed locally and never uploaded to any server.
+						<strong>Note:</strong> Your data is processed locally and never uploaded to
+						any server.
 					</div>
 				</div>
 			</section>
@@ -110,7 +111,10 @@ export default function App() {
 							<button onClick={handleReset} className="btn btn-primary">
 								Try Again
 							</button>
-							<button onClick={() => setUploadError(null)} className="btn btn-secondary">
+							<button
+								onClick={() => setUploadError(null)}
+								className="btn btn-secondary"
+							>
 								Dismiss
 							</button>
 						</div>
@@ -166,7 +170,9 @@ export default function App() {
 						<section className="chart-container">
 							<div className="section-header">
 								<h2>📈 Visual Distribution</h2>
-								<p className="section-subtitle">Percentage distribution across participants</p>
+								<p className="section-subtitle">
+									Percentage distribution across participants
+								</p>
 							</div>
 							<div className="charts-grid">
 								{processedData.chartObjects.map((chartObject, index) => {
@@ -210,7 +216,10 @@ export default function App() {
 							<div className="insight-card">
 								<h3>💬 Word Density</h3>
 								<p>
-									{(processedData.totalStats.words / processedData.totalStats.messages).toFixed(1)}{' '}
+									{(
+										processedData.totalStats.words /
+										processedData.totalStats.messages
+									).toFixed(1)}{' '}
 									words/message
 								</p>
 								<small>Average message length</small>
@@ -219,7 +228,8 @@ export default function App() {
 								<h3>🖼️ Media Usage</h3>
 								<p>
 									{(
-										((processedData.totalStats.stickers + processedData.totalStats.gifs) /
+										((processedData.totalStats.stickers +
+											processedData.totalStats.gifs) /
 											processedData.totalStats.messages) *
 										100
 									).toFixed(1)}

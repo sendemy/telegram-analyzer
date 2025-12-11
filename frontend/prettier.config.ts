@@ -9,7 +9,7 @@ const config: Config = {
 	singleQuote: true,
 	semi: true,
 	printWidth: 100,
-	gnorePath: '.prettierignore',
+	ignorePath: '.prettierignore',
 };
 
 export default config;

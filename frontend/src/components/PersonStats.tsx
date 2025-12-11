@@ -13,7 +13,12 @@ interface StatLabel {
 	label: string;
 }
 
-export default function PersonStats({ person, total, index = 0, showVisualIndicators = false }: PersonStatsProps) {
+export default function PersonStats({
+	person,
+	total,
+	index = 0,
+	showVisualIndicators = false,
+}: PersonStatsProps) {
 	const calculatePercentage = (personValue: number, totalValue: number): number => {
 		if (totalValue === 0) return 0;
 		return (personValue * 100) / totalValue;
@@ -30,7 +35,10 @@ export default function PersonStats({ person, total, index = 0, showVisualIndica
 	const accentColor = COLORS[index % COLORS.length];
 
 	return (
-		<div className="person-stats" style={showVisualIndicators ? { borderLeft: `4px solid ${accentColor}` } : {}}>
+		<div
+			className="person-stats"
+			style={showVisualIndicators ? { borderLeft: `4px solid ${accentColor}` } : {}}
+		>
 			<h2 style={showVisualIndicators ? { color: accentColor } : {}}>{person.nickname}</h2>
 
 			<div className="person-stats__wrapper">
@@ -75,7 +83,9 @@ export default function PersonStats({ person, total, index = 0, showVisualIndica
 				<div className="activity-summary">
 					<div className="summary-item">
 						<span>Activity Score:</span>
-						<span className="score">{((person.messages + person.words) / 2).toFixed(0)}</span>
+						<span className="score">
+							{((person.messages + person.words) / 2).toFixed(0)}
+						</span>
 					</div>
 					<div className="summary-item">
 						<span>Media Ratio:</span>

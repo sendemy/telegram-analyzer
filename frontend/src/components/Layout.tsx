@@ -43,7 +43,9 @@ export default function Layout({
 					<div className="footer-content">
 						<div className="footer-info">
 							<p>Made with ❤️ using Preact & Chart.js</p>
-							<p className="footer-note">Your data is processed locally and never leaves your browser.</p>
+							<p className="footer-note">
+								Your data is processed locally and never leaves your browser.
+							</p>
 						</div>
 					</div>
 				</footer>

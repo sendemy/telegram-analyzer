@@ -16,7 +16,11 @@ export default function FileUpload({
 	const [isDragging, setIsDragging] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [fileInfo, setFileInfo] = useState<{ name: string; size: number; lastModified: Date } | null>(null);
+	const [fileInfo, setFileInfo] = useState<{
+		name: string;
+		size: number;
+		lastModified: Date;
+	} | null>(null);
 	const [previewData, setPreviewData] = useState<any>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -51,7 +55,8 @@ export default function FileUpload({
 		setError(null);
 
 		// Check file type
-		const isJsonFile = file.type === 'application/json' || file.name.toLowerCase().endsWith('.json');
+		const isJsonFile =
+			file.type === 'application/json' || file.name.toLowerCase().endsWith('.json');
 		if (!isJsonFile) {
 			setError('Please upload a valid JSON file');
 			return false;
@@ -231,7 +236,13 @@ export default function FileUpload({
 					) : (
 						<>
 							<div className="upload-icon">
-								<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+								<svg
+									width="48"
+									height="48"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+								>
 									<path
 										d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
 										strokeWidth="2"
@@ -243,16 +254,26 @@ export default function FileUpload({
 										strokeLinecap="round"
 										strokeLinejoin="round"
 									/>
-									<line x1="12" y1="3" x2="12" y2="15" strokeWidth="2" strokeLinecap="round" />
+									<line
+										x1="12"
+										y1="3"
+										x2="12"
+										y2="15"
+										strokeWidth="2"
+										strokeLinecap="round"
+									/>
 								</svg>
 							</div>
 
 							<div className="upload-text">
 								<h3>Upload Telegram Chat Export</h3>
 								<p className="instruction">
-									Drag & drop your JSON file here, or <span className="browse-link">browse</span>
+									Drag & drop your JSON file here, or{' '}
+									<span className="browse-link">browse</span>
 								</p>
-								<p className="file-requirements">Supports: JSON files • Max size: {maxSizeMB}MB</p>
+								<p className="file-requirements">
+									Supports: JSON files • Max size: {maxSizeMB}MB
+								</p>
 							</div>
 						</>
 					)}
@@ -266,7 +287,11 @@ export default function FileUpload({
 					<div className="error-content">
 						<strong>Error:</strong> {error}
 					</div>
-					<button className="error-dismiss" onClick={() => setError(null)} aria-label="Dismiss error">
+					<button
+						className="error-dismiss"
+						onClick={() => setError(null)}
+						aria-label="Dismiss error"
+					>
 						&times;
 					</button>
 				</div>
@@ -277,7 +302,11 @@ export default function FileUpload({
 				<div className="file-info">
 					<div className="file-info-header">
 						<h4>Selected File</h4>
-						<button className="clear-btn" onClick={resetFileInput} aria-label="Clear selected file">
+						<button
+							className="clear-btn"
+							onClick={resetFileInput}
+							aria-label="Clear selected file"
+						>
 							Clear
 						</button>
 					</div>
@@ -292,7 +321,9 @@ export default function FileUpload({
 						<div className="file-meta">
 							<div className="file-name">{fileInfo.name}</div>
 							<div className="file-size">{formatFileSize(fileInfo.size)}</div>
-							<div className="file-modified">Modified: {formatDate(fileInfo.lastModified)}</div>
+							<div className="file-modified">
+								Modified: {formatDate(fileInfo.lastModified)}
+							</div>
 						</div>
 					</div>
 
@@ -312,7 +343,9 @@ export default function FileUpload({
 									<span className="stat-value">
 										{previewData.participants.length > 0
 											? previewData.participants.join(', ') +
-												(previewData.participants.length === 10 ? '...' : '')
+												(previewData.participants.length === 10
+													? '...'
+													: '')
 											: 'None found'}
 									</span>
 								</div>
