@@ -1,4 +1,5 @@
 import { GlobalStats, PersonStats, TelegramMessage } from '../types/telegram';
+import { isNumeric } from './strings';
 
 export function getGlobalStats(msgs: TelegramMessage[]): GlobalStats {
 	let messages = 0;
@@ -187,8 +188,4 @@ export function sortData(messages: TelegramMessage[]) {
 	});
 
 	return topWords;
-}
-
-function isNumeric(str: string) {
-	return !isNaN(parseInt(str)) && !isNaN(parseFloat(str));
 }
