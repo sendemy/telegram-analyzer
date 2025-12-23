@@ -1,0 +1,158 @@
+@use '../../../styles/design-system' as ds;
+
+// Base button styles
+.dsButton {
+	@include ds.button-base;
+	@include ds.focus-ring;
+
+	// Remove default button styles
+	appearance: none;
+	user-select: none;
+	position: relative;
+
+	// Prevent double tap zoom on mobile
+	touch-action: manipulation;
+
+	// Ensure button doesn't shrink
+	flex-shrink: 0;
+
+	// Smooth transitions
+	@include ds.transition-all('fast');
+
+	// Focus and active states
+	&:focus-visible {
+		outline-offset: 2px;
+	}
+
+	// Disabled state
+	&:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+}
+
+// Variants
+.buttonDefault {
+	@include ds.color-neutral(700, color);
+	background-color: ds.$color-neutral-100;
+	border-color: ds.$color-neutral-300;
+
+	&:hover:not(:disabled, .buttonLoading) {
+		background-color: ds.$color-neutral-200;
+		border-color: ds.$color-neutral-400;
+	}
+
+	&:active:not(:disabled, .buttonLoading) {
+		background-color: ds.$color-neutral-300;
+	}
+}
+
+.buttonAccent {
+	@include ds.color-primary-dark(color);
+	background-color: ds.$color-primary;
+	border-color: ds.$color-primary-dark;
+	color: white;
+
+	&:hover:not(:disabled, .buttonLoading) {
+		background-color: ds.$color-primary-light;
+		border-color: ds.$color-primary;
+		@include ds.shadow('md');
+	}
+
+	&:active:not(:disabled, .buttonLoading) {
+		background-color: ds.$color-primary;
+	}
+}
+
+// Sizes
+.buttonSm {
+	@include ds.px(ds.$spacing-3);
+	@include ds.py(ds.$spacing-1);
+	@include ds.text-sm;
+	@include ds.font-weight(medium);
+	@include ds.rounded-md;
+	min-height: 32px;
+}
+
+.buttonMd {
+	@include ds.px(ds.$spacing-4);
+	@include ds.py(ds.$spacing-2);
+	@include ds.text-base;
+	@include ds.font-weight(medium);
+	@include ds.rounded-md;
+	min-height: 40px;
+}
+
+.buttonLg {
+	@include ds.px(ds.$spacing-6);
+	@include ds.py(ds.$spacing-3);
+	@include ds.text-lg;
+	@include ds.font-weight(semibold);
+	@include ds.rounded-lg;
+	min-height: 48px;
+}
+
+// States
+.buttonDisabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+
+	&:hover {
+		box-shadow: none !important;
+	}
+}
+
+.buttonLoading {
+	cursor: wait;
+	opacity: 0.8;
+
+	.buttonContent {
+		opacity: 0;
+	}
+}
+
+.buttonFullWidth {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+// Loading spinner
+.loadingSpinner {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+	width: 20px;
+	height: 20px;
+	border: 2px solid transparent;
+	border-top-color: currentColor;
+	border-radius: 50%;
+	animation: button-spinner 0.6s linear infinite;
+}
+
+.contentHidden {
+	opacity: 0;
+}
+
+// Keyframes for spinner
+@keyframes button-spinner {
+	from {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+	to {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}
+
+// Responsive adjustments
+@include ds.breakpoint-sm {
+	.buttonMd {
+		@include ds.px(ds.$spacing-5);
+	}
+
+	.buttonLg {
+		@include ds.px(ds.$spacing-8);
+	}
+}

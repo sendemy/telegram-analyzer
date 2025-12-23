@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'preact/hooks';
 import Chart, { ChartConfiguration } from 'chart.js/auto';
 import { COLORS } from '../utils/constants';
+import DsTag from './ui/DsTag';
 
 interface StatsChartProps {
 	chartObject: Record<string, number>;
@@ -183,12 +184,10 @@ export default function StatsChart({ chartObject, chartType, totalStat }: StatsC
 					<div className="chart-header">
 						<h3>{formatChartTitle(chartType)} Distribution</h3>
 						<div className="chart-summary">
-							<span className="participants-count">
-								{Object.keys(chartObject).length} participants
-							</span>
-							<span className="total-count">
+							<DsTag>{Object.keys(chartObject).length} participants</DsTag>
+							<DsTag variant="accent">
 								{totalStat.toLocaleString()} {chartType}
-							</span>
+							</DsTag>
 						</div>
 					</div>
 					<div className="chart-container">

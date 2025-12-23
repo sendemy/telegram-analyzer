@@ -1,0 +1,156 @@
+@use '../../../styles/design-system' as ds;
+
+// Base card styles
+.dsCard {
+	@include ds.card-base;
+	position: relative;
+	overflow: hidden;
+	background-color: white;
+
+	// Reset
+	margin: 0;
+
+	// Ensure content doesn't overflow rounded corners
+	> *:first-child {
+		margin-top: 0;
+	}
+
+	> *:last-child {
+		margin-bottom: 0;
+	}
+}
+
+// Width
+.fullWidth {
+	width: 100%;
+}
+
+// Padding variants
+.paddingNone {
+	padding: 0;
+}
+
+.paddingSm {
+	@include ds.p(ds.$spacing-3);
+}
+
+.paddingMd {
+	@include ds.p(ds.$spacing-4);
+}
+
+.paddingLg {
+	@include ds.p(ds.$spacing-6);
+}
+
+// Shadow variants
+.shadowNone {
+	box-shadow: none;
+}
+
+.shadowSm {
+	@include ds.shadow('sm');
+}
+
+.shadowMd {
+	@include ds.shadow('md');
+}
+
+.shadowLg {
+	@include ds.shadow('lg');
+}
+
+// Border
+.withBorder {
+	border: 1px solid ds.$color-neutral-200;
+}
+
+// Hover effect
+.hoverable {
+	@include ds.transition-all('fast');
+
+	&:hover {
+		@include ds.shadow('md');
+		transform: translateY(-2px);
+	}
+}
+
+// Clickable card
+.clickable {
+	cursor: pointer;
+	@include ds.focus-ring;
+	@include ds.transition-all('fast');
+
+	&:hover {
+		@include ds.shadow('md');
+		transform: translateY(-2px);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+}
+
+// Card sections
+.cardHeader {
+	padding-bottom: ds.$spacing-4;
+	margin-bottom: ds.$spacing-4;
+	border-bottom: 1px solid ds.$color-neutral-200;
+
+	&:last-child {
+		margin-bottom: 0;
+		border-bottom: none;
+	}
+}
+
+.cardContent {
+	// Content area takes remaining space
+	flex: 1 1 auto;
+
+	// Ensure children have proper spacing
+	> * + * {
+		margin-top: ds.$spacing-4;
+	}
+}
+
+.cardFooter {
+	padding-top: ds.$spacing-4;
+	margin-top: ds.$spacing-4;
+	border-top: 1px solid ds.$color-neutral-200;
+
+	&:first-child {
+		margin-top: 0;
+		border-top: none;
+	}
+}
+
+// Accent borders (colored edges)
+.accentTop {
+	border-top: 4px solid var(--accent-color);
+}
+
+.accentRight {
+	border-right: 4px solid var(--accent-color);
+}
+
+.accentBottom {
+	border-bottom: 4px solid var(--accent-color);
+}
+
+.accentLeft {
+	border-left: 4px solid var(--accent-color);
+}
+
+// Responsive adjustments
+@include ds.breakpoint-sm {
+	.paddingSm {
+		@include ds.p(ds.$spacing-4);
+	}
+
+	.paddingMd {
+		@include ds.p(ds.$spacing-6);
+	}
+
+	.paddingLg {
+		@include ds.p(ds.$spacing-8);
+	}
+}

@@ -1,4 +1,6 @@
 import { useState, useRef } from 'preact/hooks';
+import DsTag from './ui/DsTag';
+import DsButton from './ui/DsButton';
 
 interface FileUploadProps {
 	onFileLoaded: (data: any) => void;
@@ -287,13 +289,9 @@ export default function FileUpload({
 					<div className="error-content">
 						<strong>Error:</strong> {error}
 					</div>
-					<button
-						className="error-dismiss"
-						onClick={() => setError(null)}
-						aria-label="Dismiss error"
-					>
+					<DsButton onClick={() => setError(null)} aria-label="Dismiss error">
 						&times;
-					</button>
+					</DsButton>
 				</div>
 			)}
 
@@ -302,13 +300,9 @@ export default function FileUpload({
 				<div className="file-info">
 					<div className="file-info-header">
 						<h4>Selected File</h4>
-						<button
-							className="clear-btn"
-							onClick={resetFileInput}
-							aria-label="Clear selected file"
-						>
+						<DsButton onClick={resetFileInput} aria-label="Clear selected file">
 							Clear
-						</button>
+						</DsButton>
 					</div>
 
 					<div className="file-details">
@@ -332,9 +326,9 @@ export default function FileUpload({
 						<div className="json-preview">
 							<div className="preview-header">
 								<h5>Chat Preview</h5>
-								<span className="preview-badge">
+								<DsTag variant="accent">
 									{previewData.messageCount.toLocaleString()} messages
-								</span>
+								</DsTag>
 							</div>
 
 							<div className="preview-stats">

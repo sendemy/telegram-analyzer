@@ -1,0 +1,113 @@
+@use '../../../styles/design-system' as ds;
+
+// Base tag styles
+.dsTag {
+	@include ds.tag-base;
+	@include ds.focus-ring;
+
+	// Default state
+	@include ds.color-neutral(700, color);
+	background-color: ds.$color-neutral-100;
+	border-color: ds.$color-neutral-300;
+
+	// Interactive states
+	&.tagClickable {
+		cursor: pointer;
+
+		&:hover {
+			transform: translateY(-1px);
+		}
+
+		&:active {
+			transform: translateY(0);
+		}
+	}
+}
+
+// Variants
+.tagDefault {
+	@include ds.color-neutral(700, color);
+	background-color: ds.$color-neutral-100;
+	border-color: ds.$color-neutral-300;
+
+	&.tagOutline {
+		background-color: transparent;
+		border-color: ds.$color-neutral-300;
+	}
+}
+
+.tagAccent {
+	@include ds.color-primary(color);
+	background-color: rgba(ds.$color-primary, 0.1);
+	border-color: rgba(ds.$color-primary, 0.3);
+
+	&.tagOutline {
+		background-color: transparent;
+		border-color: ds.$color-primary;
+	}
+}
+
+.tagSuccess {
+	@include ds.color-secondary(color);
+	background-color: rgba(ds.$color-secondary, 0.1);
+	border-color: rgba(ds.$color-secondary, 0.3);
+
+	&.tagOutline {
+		background-color: transparent;
+		border-color: ds.$color-secondary;
+	}
+}
+
+.tagWarning {
+	@include ds.color-warning(color);
+	background-color: rgba(ds.$color-warning, 0.1);
+	border-color: rgba(ds.$color-warning, 0.3);
+
+	&.tagOutline {
+		background-color: transparent;
+		border-color: ds.$color-warning;
+	}
+}
+
+.tagError {
+	@include ds.color-error(color);
+	background-color: rgba(ds.$color-error, 0.1);
+	border-color: rgba(ds.$color-error, 0.3);
+
+	&.tagOutline {
+		background-color: transparent;
+		border-color: ds.$color-error;
+	}
+}
+
+// Sizes
+.tagSm {
+	@include ds.px(ds.$spacing-2);
+	@include ds.py(ds.$spacing-1);
+	@include ds.text-xs;
+	@include ds.font-weight(medium);
+}
+
+.tagMd {
+	@include ds.px(ds.$spacing-3);
+	@include ds.py(ds.$spacing-1);
+	@include ds.text-sm;
+	@include ds.font-weight(medium);
+}
+
+.tagLg {
+	@include ds.px(ds.$spacing-4);
+	@include ds.py(ds.$spacing-2);
+	@include ds.text-base;
+	@include ds.font-weight(semibold);
+}
+
+// Shape
+.tagRounded {
+	@include ds.rounded-full;
+}
+
+// Transitions
+.dsTag {
+	@include ds.transition-all('fast');
+}

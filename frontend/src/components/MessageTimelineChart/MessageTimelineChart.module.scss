@@ -1,0 +1,157 @@
+@use '../../styles/design-system' as ds;
+
+// Header Layout
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: ds.$spacing-6;
+	flex-wrap: wrap;
+	gap: ds.$spacing-4;
+}
+
+.title {
+	margin: 0;
+	@include ds.text-xl;
+	@include ds.font-weight(bold);
+	@include ds.color-neutral(900, color);
+}
+
+// Controls (Time Range Switcher)
+.controls {
+	display: flex;
+	background: ds.$color-neutral-100;
+	padding: 4px;
+	@include ds.rounded-lg;
+	gap: 4px;
+}
+
+.rangeButton {
+	border: none;
+	background: transparent;
+	padding: ds.$spacing-2 ds.$spacing-4;
+	@include ds.text-sm;
+	@include ds.font-weight(medium);
+	@include ds.color-neutral(600, color);
+	cursor: pointer;
+	@include ds.rounded-md;
+	@include ds.transition-all('fast');
+
+	&:hover {
+		@include ds.color-neutral(900, color);
+		background: rgba(255, 255, 255, 0.5);
+	}
+
+	&.rangeButtonActive {
+		background: #fff;
+		@include ds.color-neutral(900, color);
+		@include ds.font-weight(semibold);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	}
+}
+
+// Summary Tags Section
+.summary {
+	display: flex;
+	gap: ds.$spacing-4;
+	margin-bottom: ds.$spacing-6;
+	flex-wrap: wrap;
+}
+
+.boldText {
+	@include ds.font-weight(bold);
+}
+
+// Chart Container
+.chartWrapper {
+	position: relative;
+	width: 100%;
+	// Aspect ratio container
+	height: 350px;
+}
+
+.canvasContainer {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+// Empty State
+.emptyState {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
+	background: ds.$color-neutral-50;
+	@include ds.rounded-lg;
+	border: 1px dashed ds.$color-neutral-300;
+	color: ds.$color-neutral-500;
+	@include ds.text-sm;
+	text-align: center;
+	padding: ds.$spacing-6;
+}
+
+// Responsive Adjustments
+@include ds.breakpoint-md {
+	.header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.controls {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.rangeButton {
+		flex: 1;
+		text-align: center;
+	}
+
+	.chartWrapper {
+		height: 300px;
+	}
+}
+
+@media (max-width: 767px) {
+	.header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: ds.$spacing-3;
+	}
+
+	.controls {
+		width: 100%;
+	}
+
+	.summary {
+		flex-direction: column;
+		gap: ds.$spacing-2;
+		align-items: flex-start;
+	}
+
+	.chartWrapper {
+		height: 250px;
+	}
+}
+
+// Print Styles
+@media print {
+	.header {
+		flex-direction: row;
+	}
+
+	.controls {
+		display: none; // Hide buttons in print
+	}
+
+	.rangeButton {
+		display: none;
+	}
+
+	.chartWrapper {
+		height: 400px;
+		break-inside: avoid;
+	}
+}

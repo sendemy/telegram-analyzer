@@ -1,12 +1,16 @@
 import { useState } from 'preact/hooks';
 import Layout from './components/Layout';
 import FileUpload from './components/FileUpload';
-import GlobalStats from './components/GlobalStats';
-import PersonStats from './components/PersonStats';
+import GlobalStats from './components/GlobalStats/GlobalStats';
+import PersonStats from './components/PersonStats/PersonStats';
 import StatsChart from './components/StatsChart';
 import { useChatData } from './hooks/useChatData';
 import { TelegramData } from './types/telegram';
 import { STAT_KEYS } from './utils/constants';
+import TopWords from './components/TopWords';
+import DsTag from './components/ui/DsTag';
+import DsButton from './components/ui/DsButton';
+import MessageTimelineChart from './components/MessageTimelineChart/MessageTimelineChart';
 
 // Loading component for better UX
 function LoadingSpinner() {
@@ -59,11 +63,13 @@ function EmptyState() {
 
 export default function App() {
 	const [uploadError, setUploadError] = useState<string | null>(null);
+	const [rawData, setRawData] = useState<TelegramData | null>(null);
 	const { processedData, isLoading, error, processChatData, resetData } = useChatData();
 
 	const handleFileUpload = async (fileData: TelegramData) => {
 		setUploadError(null);
 		try {
+			setRawData(fileData);
 			await processChatData(fileData);
 		} catch (err) {
 			setUploadError(err instanceof Error ? err.message : 'Failed to process file');
@@ -132,9 +138,9 @@ export default function App() {
 					<section className="main-container">
 						<div className="section-header">
 							<h2>📊 Global Chat Statistics</h2>
-							<button onClick={handleReset} className="btn btn-outline">
+							<DsButton onClick={handleReset} variant="accent" size="lg">
 								Reset & Upload New Chat
-							</button>
+							</DsButton>
 						</div>
 						<GlobalStats
 							data={processedData.totalStats}
@@ -147,9 +153,9 @@ export default function App() {
 						<section className="persons-container">
 							<div className="section-header">
 								<h2>👥 Participant Breakdown</h2>
-								<span className="participant-count">
+								<DsTag variant="accent" size="lg">
 									{processedData.personsStats.length} participants
-								</span>
+								</DsTag>
 							</div>
 							<div className="persons-grid">
 								{processedData.personsStats.map((person, index) => (
@@ -175,24 +181,45 @@ export default function App() {
 								</p>
 							</div>
 							<div className="charts-grid">
-								{processedData.chartObjects.map((chartObject, index) => {
-									console.log(processedData);
-
-									return (
-										<StatsChart
-											key={STAT_KEYS[index]}
-											chartObject={chartObject}
-											chartType={STAT_KEYS[index]}
-											totalStat={processedData.totalStats[STAT_KEYS[index]]}
-											colors={processedData.nicknames.map(
-												(_, i) => `hsl(${(i * 137.508) % 360}, 70%, 60%)` // Golden angle for distinct colors
-											)}
-										/>
-									);
-								})}
+								{processedData.chartObjects.map((chartObject, index) => (
+									<StatsChart
+										key={STAT_KEYS[index]}
+										chartObject={chartObject}
+										chartType={STAT_KEYS[index]}
+										totalStat={processedData.totalStats[STAT_KEYS[index]]}
+										colors={processedData.nicknames.map(
+											(_, i) => `hsl(${(i * 137.508) % 360}, 70%, 60%)` // Golden angle for distinct colors
+										)}
+									/>
+								))}
 							</div>
 						</section>
 					)}
+
+					{processedData.chartObjects.length > 0 && (
+						<section>
+							<div className="section-header">
+								<h2>Message Activity</h2>
+							</div>
+							<MessageTimelineChart messages={rawData.messages} />
+						</section>
+					)}
+
+					{processedData &&
+						processedData.topWords &&
+						Object.keys(processedData.topWords).length > 0 && (
+							<section className="top-words-section">
+								<div className="section-header minimal-header">
+									<h2>Word Frequency</h2>
+								</div>
+								<TopWords
+									words={processedData.topWords}
+									title=""
+									maxWords={10}
+									barColor="#2b5797" // Or use a custom color: "#dc2626" for red, "#059669" for green
+								/>
+							</section>
+						)}
 
 					{/* Additional Insights */}
 					<section className="insights-container">

@@ -1,0 +1,569 @@
+// ============================================
+// DESIGN SYSTEM: FOUNDATIONS
+// ============================================
+@use 'sass:map';
+
+// Colors - Semantic Tokens
+$color-primary: #2b5797; // Main brand blue (Telegram)
+$color-primary-light: #4a7bc8;
+$color-primary-dark: #1e3c72;
+
+$color-secondary: #27ae60; // Success green
+$color-warning: #f39c12; // Warning orange
+$color-error: #e74c3c; // Error red
+$color-info: #3498db; // Info blue
+
+// Neutral Colors
+$color-neutral-50: #f9fafb;
+$color-neutral-100: #f3f4f6;
+$color-neutral-200: #e5e7eb;
+$color-neutral-300: #d1d5db;
+$color-neutral-400: #9ca3af;
+$color-neutral-500: #6b7280;
+$color-neutral-600: #4b5563;
+$color-neutral-700: #374151;
+$color-neutral-800: #1f2937;
+$color-neutral-900: #111827;
+
+// Chart Colors (for multiple datasets)
+$chart-colors: (
+	'red': #b91d47,
+	'teal': #00aba9,
+	'blue': #2b5797,
+	'peach': #e8c3b9,
+	'green': #1e7145,
+	'cyan': #00ffff,
+	'gray': #696969,
+	'pink': #ffc0cb,
+	'slate': #808080,
+	'lavender': #e6e6fa,
+	'powder': #b0e0e6,
+	'lime': #7cfc00,
+	'black': #000000,
+);
+
+// Typography
+$font-family-base:
+	-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+$font-family-mono: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Courier New', monospace;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+$font-size-xs: 0.75rem; // 12px
+$font-size-sm: 0.875rem; // 14px
+$font-size-base: 1rem; // 16px
+$font-size-lg: 1.125rem; // 18px
+$font-size-xl: 1.25rem; // 20px
+$font-size-2xl: 1.5rem; // 24px
+$font-size-3xl: 1.875rem; // 30px
+
+$line-height-tight: 1.25;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+
+// Spacing Scale
+$spacing-1: 0.25rem; // 4px
+$spacing-2: 0.5rem; // 8px
+$spacing-3: 0.75rem; // 12px
+$spacing-4: 1rem; // 16px
+$spacing-5: 1.25rem; // 20px
+$spacing-6: 1.5rem; // 24px
+$spacing-8: 2rem; // 32px
+$spacing-10: 2.5rem; // 40px
+$spacing-12: 3rem; // 48px
+
+// Border Radius
+$border-radius-sm: 0.25rem; // 4px
+$border-radius-md: 0.375rem; // 6px
+$border-radius-lg: 0.5rem; // 8px
+$border-radius-xl: 0.75rem; // 12px
+$border-radius-full: 9999px;
+
+// Shadows
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+// Transitions
+$transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+// Z-index layers
+$z-index-dropdown: 1000;
+$z-index-sticky: 1020;
+$z-index-fixed: 1030;
+$z-index-modal-backdrop: 1040;
+$z-index-modal: 1050;
+$z-index-popover: 1060;
+$z-index-tooltip: 1070;
+
+// Breakpoints
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+$breakpoint-2xl: 1536px;
+
+// ============================================
+// MIXINS
+// ============================================
+
+// Color Mixins
+@mixin color-primary($property: color) {
+	#{$property}: $color-primary;
+}
+
+@mixin color-primary-light($property: color) {
+	#{$property}: $color-primary-light;
+}
+
+@mixin color-primary-dark($property: color) {
+	#{$property}: $color-primary-dark;
+}
+
+@mixin color-secondary($property: color) {
+	#{$property}: $color-secondary;
+}
+
+@mixin color-warning($property: color) {
+	#{$property}: $color-warning;
+}
+
+@mixin color-error($property: color) {
+	#{$property}: $color-error;
+}
+
+@mixin color-info($property: color) {
+	#{$property}: $color-info;
+}
+
+@mixin color-neutral($level, $property: color) {
+	#{$property}: map.get(
+		(
+			50: $color-neutral-50,
+			100: $color-neutral-100,
+			200: $color-neutral-200,
+			300: $color-neutral-300,
+			400: $color-neutral-400,
+			500: $color-neutral-500,
+			600: $color-neutral-600,
+			700: $color-neutral-700,
+			800: $color-neutral-800,
+			900: $color-neutral-900,
+		),
+		$level
+	);
+}
+
+// Typography Mixins
+@mixin font-family-base {
+	font-family: $font-family-base;
+}
+
+@mixin font-family-mono {
+	font-family: $font-family-mono;
+}
+
+@mixin font-weight($weight) {
+	font-weight: $weight;
+}
+
+@mixin font-size($size) {
+	font-size: $size;
+	line-height: $line-height-normal;
+
+	@if $size == $font-size-xs or $size == $font-size-sm {
+		line-height: $line-height-tight;
+	}
+
+	@if $size == $font-size-2xl or $size == $font-size-3xl {
+		line-height: $line-height-tight;
+	}
+}
+
+@mixin text-xs {
+	@include font-size($font-size-xs);
+	line-height: $line-height-tight;
+}
+
+@mixin text-sm {
+	@include font-size($font-size-sm);
+	line-height: $line-height-tight;
+}
+
+@mixin text-base {
+	@include font-size($font-size-base);
+	line-height: $line-height-normal;
+}
+
+@mixin text-lg {
+	@include font-size($font-size-lg);
+	line-height: $line-height-normal;
+}
+
+@mixin text-xl {
+	@include font-size($font-size-xl);
+	line-height: $line-height-tight;
+}
+
+@mixin text-2xl {
+	@include font-size($font-size-2xl);
+	line-height: $line-height-tight;
+}
+
+@mixin text-3xl {
+	@include font-size($font-size-3xl);
+	line-height: $line-height-tight;
+}
+
+// Spacing Mixins
+@mixin spacing($direction, $size) {
+	@if $direction == 'p' {
+		padding: $size;
+	} @else if $direction == 'px' {
+		padding-left: $size;
+		padding-right: $size;
+	} @else if $direction == 'py' {
+		padding-top: $size;
+		padding-bottom: $size;
+	} @else if $direction == 'pt' {
+		padding-top: $size;
+	} @else if $direction == 'pr' {
+		padding-right: $size;
+	} @else if $direction == 'pb' {
+		padding-bottom: $size;
+	} @else if $direction == 'pl' {
+		padding-left: $size;
+	} @else if $direction == 'm' {
+		margin: $size;
+	} @else if $direction == 'mx' {
+		margin-left: $size;
+		margin-right: $size;
+	} @else if $direction == 'my' {
+		margin-top: $size;
+		margin-bottom: $size;
+	} @else if $direction == 'mt' {
+		margin-top: $size;
+	} @else if $direction == 'mr' {
+		margin-right: $size;
+	} @else if $direction == 'mb' {
+		margin-bottom: $size;
+	} @else if $direction == 'ml' {
+		margin-left: $size;
+	}
+}
+
+@mixin p($size) {
+	padding: $size;
+}
+
+@mixin px($size) {
+	padding-left: $size;
+	padding-right: $size;
+}
+
+@mixin py($size) {
+	padding-top: $size;
+	padding-bottom: $size;
+}
+
+@mixin m($size) {
+	margin: $size;
+}
+
+@mixin mx($size) {
+	margin-left: $size;
+	margin-right: $size;
+}
+
+@mixin my($size) {
+	margin-top: $size;
+	margin-bottom: $size;
+}
+
+// Border Radius Mixins
+@mixin rounded($radius) {
+	border-radius: $radius;
+}
+
+@mixin rounded-sm {
+	border-radius: $border-radius-sm;
+}
+
+@mixin rounded-md {
+	border-radius: $border-radius-md;
+}
+
+@mixin rounded-lg {
+	border-radius: $border-radius-lg;
+}
+
+@mixin rounded-xl {
+	border-radius: $border-radius-xl;
+}
+
+@mixin rounded-full {
+	border-radius: $border-radius-full;
+}
+
+// Shadow Mixins
+@mixin shadow($level) {
+	@if $level == 'sm' {
+		box-shadow: $shadow-sm;
+	} @else if $level == 'md' {
+		box-shadow: $shadow-md;
+	} @else if $level == 'lg' {
+		box-shadow: $shadow-lg;
+	} @else if $level == 'xl' {
+		box-shadow: $shadow-xl;
+	} @else if $level == 'none' {
+		box-shadow: none;
+	}
+}
+
+// Transition Mixins
+@mixin transition-all($speed: normal) {
+	@if $speed == 'fast' {
+		transition: all $transition-fast;
+	} @else if $speed == 'normal' {
+		transition: all $transition-normal;
+	} @else if $speed == 'slow' {
+		transition: all $transition-slow;
+	}
+}
+
+@mixin transition-transform($speed: normal) {
+	@if $speed == 'fast' {
+		transition: transform $transition-fast;
+	} @else if $speed == 'normal' {
+		transition: transform $transition-normal;
+	} @else if $speed == 'slow' {
+		transition: transform $transition-slow;
+	}
+}
+
+@mixin transition-opacity($speed: normal) {
+	@if $speed == 'fast' {
+		transition: opacity $transition-fast;
+	} @else if $speed == 'normal' {
+		transition: opacity $transition-normal;
+	} @else if $speed == 'slow' {
+		transition: opacity $transition-slow;
+	}
+}
+
+// Layout Mixins
+@mixin flex-center {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+@mixin flex-between {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+@mixin flex-col {
+	display: flex;
+	flex-direction: column;
+}
+
+@mixin grid-cols($cols) {
+	display: grid;
+	grid-template-columns: repeat($cols, minmax(0, 1fr));
+}
+
+@mixin gap($size) {
+	gap: $size;
+}
+
+// State Mixins
+@mixin hover {
+	&:hover {
+		@content;
+	}
+}
+
+@mixin focus {
+	&:focus {
+		@content;
+	}
+}
+
+@mixin active {
+	&:active {
+		@content;
+	}
+}
+
+@mixin disabled {
+	&:disabled {
+		@content;
+	}
+}
+
+// Responsive Mixins
+@mixin breakpoint-sm {
+	@media (min-width: $breakpoint-sm) {
+		@content;
+	}
+}
+
+@mixin breakpoint-md {
+	@media (min-width: $breakpoint-md) {
+		@content;
+	}
+}
+
+@mixin breakpoint-lg {
+	@media (min-width: $breakpoint-lg) {
+		@content;
+	}
+}
+
+@mixin breakpoint-xl {
+	@media (min-width: $breakpoint-xl) {
+		@content;
+	}
+}
+
+// Component-specific Mixins
+@mixin card-base {
+	background-color: white;
+	border: 1px solid $color-neutral-200;
+	@include rounded-lg;
+	@include shadow('sm');
+}
+
+@mixin button-base {
+	@include font-family-base;
+	@include font-weight(medium);
+	@include text-sm;
+	@include rounded-md;
+	@include px($spacing-4);
+	@include py($spacing-2);
+	border: 1px solid transparent;
+	cursor: pointer;
+	@include transition-all('fast');
+	text-align: center;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: $spacing-2;
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+}
+
+@mixin tag-base {
+	@include font-family-base;
+	@include font-weight(medium);
+	border: 1px solid;
+	display: inline-flex;
+	align-items: center;
+	white-space: nowrap;
+}
+
+@mixin progress-bar-base {
+	background-color: $color-neutral-200;
+	border-radius: $border-radius-full;
+	overflow: hidden;
+	position: relative;
+}
+
+// Accessibility
+@mixin focus-ring {
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+
+	&:focus-visible {
+		outline-color: $color-primary;
+		outline-offset: 2px;
+	}
+}
+
+// Animation
+@mixin animate-fade-in {
+	animation: fade-in $transition-normal;
+}
+
+@mixin animate-slide-up {
+	animation: slide-up $transition-normal;
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes slide-up {
+	from {
+		transform: translateY(10px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+// ============================================
+// UTILITY CLASSES (optional, can be used in components)
+// ============================================
+
+.ds-container {
+	width: 100%;
+	max-width: $breakpoint-xl;
+	@include mx(auto);
+	@include px($spacing-4);
+
+	@include breakpoint-md {
+		@include px($spacing-6);
+	}
+}
+
+.ds-text-center {
+	text-align: center;
+}
+
+.ds-text-right {
+	text-align: right;
+}
+
+.ds-hidden {
+	display: none !important;
+}
+
+.ds-sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+// Export variables for TypeScript if needed
+:export {
+	colorPrimary: $color-primary;
+	colorSecondary: $color-secondary;
+	colorWarning: $color-warning;
+	colorError: $color-error;
+	colorInfo: $color-info;
+}

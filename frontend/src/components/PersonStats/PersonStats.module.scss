@@ -1,0 +1,257 @@
+@use '../../styles/design-system' as ds;
+
+// Main container - now handled by DsCard
+// .person-stats is replaced by DsCard styles
+
+// Person name/title
+h2 {
+	margin-top: 0;
+	margin-bottom: ds.$spacing-6;
+	@include ds.text-xl;
+	@include ds.font-weight(bold);
+}
+
+// Stats wrapper grid
+.wrapper {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: ds.$spacing-8;
+	margin-bottom: ds.$spacing-6;
+}
+
+// Stats columns (digits and percent)
+.statsColumn {
+	padding: ds.$spacing-4;
+	background: ds.$color-neutral-50;
+	@include ds.rounded-lg;
+	border: 1px solid ds.$color-neutral-200;
+}
+
+.columnTitle {
+	margin-top: 0;
+	margin-bottom: ds.$spacing-4;
+	@include ds.text-lg;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(900, color);
+}
+
+// Stat rows
+.statRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: ds.$spacing-3;
+	padding: ds.$spacing-2 0;
+	border-bottom: 1px dashed ds.$color-neutral-300;
+}
+
+.statRow:last-child {
+	border-bottom: none;
+	margin-bottom: 0;
+}
+
+.statLabel {
+	@include ds.text-xl;
+	@include ds.font-weight(medium);
+	@include ds.color-neutral(700, color);
+	min-width: 100px;
+}
+
+.statValue {
+	@include ds.text-xl;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(900, color);
+	font-family: ds.$font-family-mono;
+}
+
+// Percentage bar container
+.percentageContainer {
+	display: flex;
+	align-items: center;
+	gap: ds.$spacing-4;
+}
+
+.percentageBar {
+	flex-grow: 1;
+	height: 8px;
+	background: ds.$color-neutral-300;
+	@include ds.rounded-full;
+	overflow: hidden;
+}
+
+.percentageFill {
+	height: 100%;
+	@include ds.rounded-full;
+	@include ds.transition-all('normal');
+}
+
+// Activity summary section
+.activitySummary {
+	display: flex;
+	justify-content: space-around;
+	margin-top: ds.$spacing-6;
+	padding-top: ds.$spacing-6;
+	border-top: 1px solid ds.$color-neutral-200;
+}
+
+.summaryItem {
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	align-content: stretch;
+	padding: ds.$spacing-4;
+	background: ds.$color-neutral-50;
+	@include ds.rounded-lg;
+	border: 1px solid ds.$color-neutral-200;
+	min-width: 120px;
+}
+
+.summaryItem span {
+	display: block;
+}
+
+.scoreDetails {
+	font-family: ds.$font-family-mono;
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-2;
+}
+
+.scoreMain {
+	@include ds.text-lg;
+	@include ds.font-weight(bold);
+	line-height: 1.2;
+}
+
+// Word density display
+.densityDisplay,
+.densityValue {
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-2;
+}
+
+.densityValue {
+	font-family: ds.$font-family-mono;
+	gap: ds.$spacing-1;
+	@include ds.text-lg;
+	@include ds.font-weight(bold);
+	line-height: 1.2;
+}
+
+.densityCategory {
+	@include ds.text-sm;
+	text-transform: capitalize;
+}
+
+// Media ratio
+.mediaRatio {
+	font-family: ds.$font-family-mono;
+	@include ds.text-lg;
+	@include ds.font-weight(bold);
+	display: block;
+	line-height: 1.2;
+}
+
+.mediaBreakdown {
+	@include ds.text-sm;
+	@include ds.color-neutral(600, color);
+	margin-top: ds.$spacing-2;
+}
+
+// Activity level color coding (for inline styles)
+:global([style*='very-high']) {
+	background-color: rgba(ds.$color-secondary, 0.1) !important;
+	color: ds.$color-secondary !important;
+}
+
+:global([style*='high']) {
+	background-color: rgba(ds.$color-info, 0.1) !important;
+	color: ds.$color-info !important;
+}
+
+:global([style*='medium']) {
+	background-color: rgba(ds.$color-warning, 0.1) !important;
+	color: ds.$color-warning !important;
+}
+
+:global([style*='low']) {
+	background-color: rgba(ds.$color-error, 0.1) !important;
+	color: ds.$color-error !important;
+}
+
+:global([style*='very-low']) {
+	background-color: rgba(ds.$color-neutral-400, 0.1) !important;
+	color: ds.$color-neutral-600 !important;
+}
+
+// Responsive design
+@include ds.breakpoint-md {
+	// For tablets
+	.activitySummary {
+		gap: ds.$spacing-4;
+	}
+}
+
+@media (max-width: 767px) {
+	.wrapper {
+		grid-template-columns: 1fr;
+		gap: ds.$spacing-6;
+	}
+
+	.percentageContainer {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: ds.$spacing-2;
+		min-width: auto;
+	}
+
+	.activitySummary {
+		flex-direction: column;
+		gap: ds.$spacing-4;
+	}
+
+	.summaryItem {
+		min-width: auto;
+	}
+
+	// Adjust spacing on mobile
+	.statsColumn {
+		padding: ds.$spacing-3;
+	}
+
+	.columnTitle {
+		margin-bottom: ds.$spacing-3;
+	}
+}
+
+// Print styles
+@media print {
+	.wrapper {
+		grid-template-columns: 1fr 1fr;
+		gap: ds.$spacing-4;
+	}
+
+	.statsColumn {
+		background: transparent;
+		border: 1px solid #ddd;
+	}
+
+	.activitySummary {
+		border-top: 1px solid #ddd;
+	}
+
+	.summaryItem {
+		background: transparent;
+		border: 1px solid #ddd;
+	}
+
+	// Ensure percentages are visible
+	.percentageBar {
+		background: #eee;
+	}
+
+	.percentageFill {
+		background: #333 !important; // Force dark for print
+	}
+}

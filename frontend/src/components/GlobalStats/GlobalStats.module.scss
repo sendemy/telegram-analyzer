@@ -1,0 +1,127 @@
+@use '../../styles/design-system' as ds;
+
+.globalStats {
+	.header {
+		margin-bottom: ds.$spacing-6;
+		text-align: center;
+
+		@include ds.breakpoint-md {
+			text-align: left;
+		}
+	}
+
+	.title {
+		@include ds.text-2xl;
+		@include ds.font-weight(bold);
+		@include ds.color-neutral(900, color);
+		margin: 0;
+	}
+}
+
+.statsGrid {
+	display: grid;
+	gap: ds.$spacing-4;
+
+	grid-template-columns: repeat(3, 1fr);
+}
+
+.statCard {
+	height: 100%;
+	transition:
+		transform ds.$transition-normal,
+		box-shadow ds.$transition-normal;
+
+	&:hover {
+		transform: translateY(-4px);
+		@include ds.shadow('md');
+	}
+}
+
+.statContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	height: 100%;
+
+	@include ds.breakpoint-md {
+		flex-direction: row;
+		text-align: left;
+		gap: ds.$spacing-4;
+	}
+}
+
+.statIcon {
+	font-size: 2rem;
+	margin-bottom: ds.$spacing-3;
+	flex-shrink: 0;
+
+	@include ds.breakpoint-md {
+		margin-bottom: 0;
+		font-size: 1.75rem;
+	}
+}
+
+.statDetails {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.statTitle {
+	@include ds.text-sm;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(700, color);
+	margin: 0 0 ds.$spacing-1 0;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.statValue {
+	@include ds.text-2xl;
+	@include ds.font-weight(bold);
+	@include ds.color-primary(color);
+	margin: 0 0 ds.$spacing-1 0;
+	line-height: 1.2;
+}
+
+.statLabel {
+	@include ds.text-sm;
+	@include ds.color-neutral(600, color);
+	margin: 0;
+	line-height: 1.4;
+}
+
+// Alternative: Minimal version with accent borders
+.statCard.minimal {
+	border: 1px solid ds.$color-neutral-200;
+	background: transparent;
+
+	.statIcon {
+		font-size: 1.5rem;
+		opacity: 0.8;
+	}
+
+	.statValue {
+		@include ds.text-xl;
+		@include ds.font-weight(semibold);
+	}
+}
+
+// Alternative: Compact version for mobile
+@media (max-width: ds.$breakpoint-sm) {
+	.statContent {
+		flex-direction: row;
+		text-align: left;
+		gap: ds.$spacing-3;
+	}
+
+	.statIcon {
+		margin-bottom: 0;
+		font-size: 1.5rem;
+	}
+
+	.statValue {
+		@include ds.text-xl;
+	}
+}
