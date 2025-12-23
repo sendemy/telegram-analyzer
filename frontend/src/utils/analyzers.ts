@@ -1,4 +1,5 @@
 import { GlobalStats, PersonStats, TelegramMessage } from '../types/telegram';
+import { STOP_WORDS } from './constants';
 import { isNumeric } from './strings';
 
 export function getGlobalStats(msgs: TelegramMessage[]): GlobalStats {
@@ -115,77 +116,77 @@ export function getPersonStats(msgs: TelegramMessage[], nickname: string): Perso
 	};
 }
 
+/**
+ * Optimized regex to match word characters (Unicode Letters).
+ * \p{L} matches any kind of letter from any language.
+ * The 'u' flag is required for Unicode property escapes.
+ * This automatically filters out:
+ * 1. Numbers
+ * 2. Emojis (Extended_Pictographic)
+ * 3. Punctuation/Symbols
+ */
+const WORD_REGEX = /\p{L}+/gu;
+
 export function sortData(messages: TelegramMessage[]) {
-	// key: word, value: number of its occurrences
 	const words: Record<string, number> = {};
 
-	// regex to filter out emojis
-	const regexEmoji = /[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{1F9B0}-\u{1F9B3}]/u;
+	// Optimization: Hoist helper function outside the loop to avoid
+	// re-creating it for every single message.
+	const processText = (text: string) => {
+		// match() returns array of strings or null.
+		// It automatically handles multiple spaces, newlines, and empty strings.
+		const matches = text.match(WORD_REGEX);
+		if (!matches) return;
+
+		for (let i = 0; i < matches.length; i++) {
+			let word = matches[i];
+
+			// 1. Fast Fail: Length check (avoid .toLowerCase() for very short words)
+			if (word.length < 2) continue;
+
+			word = word.toLowerCase();
+
+			// 2. Stop Word Check (Expensive Set lookup)
+			if (STOP_WORDS.has(word)) continue;
+
+			// 3. Count
+			words[word] = (words[word] || 0) + 1;
+		}
+	};
 
 	for (const msg of messages) {
-		// if the message is a non-empty text string
-		if (msg.type == 'message' && msg.text != '' && typeof msg.text == 'string') {
-			for (const word of msg.text.split(' ')) {
-				const lowerCaseWord = word.toLowerCase();
+		// Fast fail for non-message types
+		if (msg.type !== 'message') continue;
 
-				if (
-					!words.hasOwnProperty(lowerCaseWord) &&
-					!regexEmoji.test(word) &&
-					!isNumeric(word)
-				) {
-					words[lowerCaseWord] = 1;
-				} else if (
-					words.hasOwnProperty(lowerCaseWord) &&
-					!regexEmoji.test(word) &&
-					!isNumeric(word)
-				) {
-					words[lowerCaseWord] += 1;
-				}
-			}
-			// if the message consists of a file/link/img etc. and has text in it
-		} else if (msg.type == 'message' && msg.text != '' && Array.isArray(msg.text)) {
-			for (const innerMsg of msg.text) {
-				if (typeof innerMsg == 'string') {
-					for (const word of innerMsg.split(' ')) {
-						const lowerCaseWord = word.toLowerCase();
+		// Fast fail for empty text
+		if (!msg.text) continue;
 
-						if (
-							!words.hasOwnProperty(lowerCaseWord) &&
-							!regexEmoji.test(word) &&
-							!isNumeric(word)
-						) {
-							words[lowerCaseWord] = 1;
-						} else if (
-							words.hasOwnProperty(lowerCaseWord) &&
-							!regexEmoji.test(word) &&
-							!isNumeric(word)
-						) {
-							words[lowerCaseWord] += 1;
-						}
-					}
+		if (typeof msg.text === 'string') {
+			processText(msg.text);
+		} else if (Array.isArray(msg.text)) {
+			// Optimization: Use standard for-loop for array iteration (faster than .forEach)
+			for (let i = 0; i < msg.text.length; i++) {
+				const innerMsg = msg.text[i];
+				if (typeof innerMsg === 'string') {
+					processText(innerMsg);
 				}
 			}
 		}
 	}
 
-	// sorting array by the number of word occurrences
-	const sorted = Object.entries(words)
-		.sort(([, v1], [, v2]) => v2 - v1)
-		.reduce(
-			(obj, [k, v]) => ({
-				...obj,
-				[k]: v,
-			}),
-			{}
-		);
+	// Convert object to entries and sort by frequency (Descending)
+	const sortedEntries = Object.entries(words).sort(([, a], [, b]) => b - a);
 
-	const topWords = {};
+	// Optimization: Manually construct the top 10 object.
+	// This avoids the overhead of creating a potentially huge intermediate object
+	// and then discarding it.
+	const topWords: Record<string, number> = {};
+	const limit = Math.min(sortedEntries.length, 10);
 
-	Object.entries(sorted).forEach(([key, value], ind) => {
-		if (ind < 10) {
-			topWords[key] = value;
-		}
-	});
+	for (let i = 0; i < limit; i++) {
+		const [key, value] = sortedEntries[i];
+		topWords[key] = value;
+	}
 
 	return topWords;
 }

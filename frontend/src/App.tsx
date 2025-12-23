@@ -7,7 +7,7 @@ import StatsChart from './components/StatsChart';
 import { useChatData } from './hooks/useChatData';
 import { TelegramData } from './types/telegram';
 import { STAT_KEYS } from './utils/constants';
-import TopWords from './components/TopWords';
+import TopWords from './components/TopWords/TopWords';
 import DsTag from './components/ui/DsTag';
 import DsButton from './components/ui/DsButton';
 import MessageTimelineChart from './components/MessageTimelineChart/MessageTimelineChart';
@@ -215,7 +215,6 @@ export default function App() {
 								<TopWords
 									words={processedData.topWords}
 									title=""
-									maxWords={10}
 									barColor="#2b5797" // Or use a custom color: "#dc2626" for red, "#059669" for green
 								/>
 							</section>

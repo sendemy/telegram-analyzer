@@ -1,0 +1,185 @@
+@use '../../styles/design-system' as ds;
+
+// Main container
+.topWords {
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-6;
+}
+
+// Header Section
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: ds.$spacing-4;
+	padding-bottom: ds.$spacing-4;
+	border-bottom: 1px solid ds.$color-neutral-200;
+}
+
+.title {
+	margin: 0;
+	@include ds.text-xl;
+	@include ds.font-weight(bold);
+	@include ds.color-neutral(900, color);
+}
+
+.statsRow {
+	display: flex;
+	gap: ds.$spacing-2;
+}
+
+// List Container
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-5;
+}
+
+// Individual Word Item
+.item {
+	display: flex;
+	gap: ds.$spacing-4;
+	align-items: center;
+}
+
+// Rank Badge
+.rank {
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: ds.$color-neutral-100;
+	color: ds.$color-neutral-500;
+	@include ds.rounded-full;
+	@include ds.font-weight(bold);
+	@include ds.text-sm;
+}
+
+.rankNumber {
+	line-height: 1;
+}
+
+// Content Area (Word + Chart)
+.content {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-2;
+	min-width: 0; // Prevents text overflow issues in flex items
+}
+
+// Row containing Word and Count
+.itemHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.wordText {
+	@include ds.text-base;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(800, color);
+	text-transform: capitalize; // Makes it look cleaner
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-right: ds.$spacing-2;
+}
+
+.itemStats {
+	display: flex;
+	align-items: center;
+	gap: ds.$spacing-3;
+	flex-shrink: 0;
+}
+
+.percentageText {
+	@include ds.text-sm;
+	@include ds.color-neutral(500, color);
+	@include ds.font-weight(medium);
+	font-family: ds.$font-family-mono;
+}
+
+// Chart/Bar
+.chartContainer {
+	width: 100%;
+	height: 8px;
+	background: ds.$color-neutral-100;
+	@include ds.rounded-full;
+	overflow: hidden;
+	position: relative;
+}
+
+.bar {
+	height: 100%;
+	@include ds.rounded-full;
+	@include ds.transition-all('normal');
+	min-width: 4px; // Ensure even small values are visible
+}
+
+// Hover Effect
+.item:hover .wordText {
+	@include ds.color-primary(color);
+}
+
+// Empty State
+.emptyState {
+	text-align: center;
+	padding: ds.$spacing-8;
+	background: ds.$color-neutral-50;
+	@include ds.rounded-lg;
+	border: 1px dashed ds.$color-neutral-300;
+}
+
+.emptyTitle {
+	@include ds.text-lg;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(700, color);
+	margin: 0 0 ds.$spacing-2 0;
+}
+
+.emptyMessage {
+	@include ds.text-sm;
+	@include ds.color-neutral(500, color);
+	margin: 0;
+}
+
+// Responsive
+@media (max-width: 767px) {
+	.header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.statsRow {
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.wordText {
+		max-width: 150px;
+	}
+}
+
+// Print styles
+@media print {
+	.header {
+		border-bottom: 1px solid #ccc;
+	}
+
+	.rank {
+		border: 1px solid #ccc;
+		background: #fff;
+	}
+
+	.bar {
+		// In print, ensure color has contrast
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+}
