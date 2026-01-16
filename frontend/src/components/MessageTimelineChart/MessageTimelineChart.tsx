@@ -6,11 +6,17 @@ import DsCard from '../ui/DsCard';
 import DsTag from '../ui/DsTag';
 import styles from './MessageTimelineChart.module.scss';
 
-type TimeRange = 'week' | 'month' | 'year';
+type TimeRange = 'week' | 'month' | 'year' | 'all';
 
 interface MessageTimelineChartProps {
 	messages: TelegramMessage[];
 	className?: string;
+}
+
+// Structure to hold aggregated data for a specific date bucket
+interface DateBucket {
+	total: number;
+	userCounts: Record<string, number>;
 }
 
 export default function MessageTimelineChart({ messages, className }: MessageTimelineChartProps) {
@@ -35,60 +41,167 @@ export default function MessageTimelineChart({ messages, className }: MessageTim
 	};
 
 	// Format date for display (e.g., "24 Oct")
-	const formatLabelDate = (dateString: string): string => {
-		const date = new Date(dateString);
-		return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+	const formatLabelDate = (date: Date): string => {
+		return date.toLocaleDateString('en-US', {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric',
+		});
 	};
 
-	// Process data: Filter by time range and group by date
+	const getWeekStart = (date: Date): Date => {
+		const d = new Date(date);
+		const day = d.getDay();
+		const diff = d.getDate() - day;
+		const newDate = new Date(d.setDate(diff));
+		newDate.setHours(0, 0, 0, 0);
+		return newDate;
+	};
+
+	const formatKeyDate = (date: Date): string => {
+		return date.toLocaleDateString('en-CA');
+	};
+
+	// Helper to get the date key for a message (Day or Week start)
+	const getDateKey = (msg: TelegramMessage, isWeekly: boolean): string => {
+		if (isWeekly) {
+			return formatKeyDate(getWeekStart(new Date(msg.date)));
+		}
+		return msg.date.split('T')[0]; // Daily: YYYY-MM-DD
+	};
+
+	// Process data: Filter, Aggregate Total + Top Users
 	const processChartData = () => {
-		const cutoff = getCutoffDate(timeRange);
+		// Determine Time Range Limits
+		let minDate: Date;
+		let maxDate: Date;
+		let isWeekly = false;
+		let filteredMsgs: TelegramMessage[] = [];
 
-		// 1. Filter messages
-		const filteredMsgs = messages.filter((msg) => {
-			const msgDate = new Date(msg.date);
-			return msgDate >= cutoff && msg.type === 'message';
-		});
+		if (timeRange === 'all') {
+			if (messages.length === 0) return { labels: [], datasets: [] };
 
-		// 2. Group by day (ignoring time, keeping only date string)
-		const groupedData: Record<string, number> = {};
+			minDate = new Date(messages[0].date);
+			maxDate = new Date(messages[0].date);
+			filteredMsgs = messages;
 
-		filteredMsgs.forEach((msg) => {
-			// msg.date is usually "YYYY-MM-DDTHH:mm:ss"
-			const dayKey = msg.date.split('T')[0];
-			groupedData[dayKey] = (groupedData[dayKey] || 0) + 1;
-		});
+			messages.forEach((msg) => {
+				const d = new Date(msg.date);
+				if (d < minDate) minDate = d;
+				if (d > maxDate) maxDate = d;
+			});
+			isWeekly = true;
+		} else {
+			const cutoff = getCutoffDate(timeRange);
+			minDate = new Date(cutoff);
+			maxDate = new Date();
 
-		// 3. Initialize days to ensure continuity (New Logic)
-		const labels: string[] = [];
-		const data: number[] = [];
-
-		// Normalize start and end dates to midnight to avoid timezone issues
-		const start = new Date(cutoff);
-		start.setHours(0, 0, 0, 0);
-
-		const end = new Date();
-		end.setHours(0, 0, 0, 0);
-
-		// Loop through every day from start to end
-		for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
-			// Format date key to match "YYYY-MM-DD"
-			const year = d.getFullYear();
-			const month = String(d.getMonth() + 1).padStart(2, '0');
-			const day = String(d.getDate()).padStart(2, '0');
-			const dateKey = `${year}-${month}-${day}`;
-
-			// Add the label for the X-axis
-			labels.push(formatLabelDate(dateKey));
-
-			// Add the data point: use the count from groupedData, or 0 if no messages that day
-			data.push(groupedData[dateKey] || 0);
+			// Filter messages
+			filteredMsgs = messages.filter((msg) => {
+				const msgDate = new Date(msg.date);
+				return msgDate >= cutoff && msg.type === 'message';
+			});
 		}
 
-		return {
-			labels,
-			data,
+		// 1. Identify Top 3 Users in this range
+		const userTotals: Record<string, number> = {};
+		filteredMsgs.forEach((msg) => {
+			if (msg.type === 'message' && msg.from) {
+				userTotals[msg.from] = (userTotals[msg.from] || 0) + 1;
+			}
+		});
+
+		// Sort users by count and take top 5
+		const topUsers = Object.entries(userTotals)
+			.sort(([, a], [, b]) => b - a)
+			.slice(0, 5)
+			.map(([name]) => name);
+
+		// 2. Aggregate Data by Date (or Week)
+		// Structure: Map<DateString, DateBucket>
+		const dataMap = new Map<string, DateBucket>();
+
+		filteredMsgs.forEach((msg) => {
+			if (msg.type !== 'message') return;
+
+			const key = getDateKey(msg, isWeekly);
+
+			if (!dataMap.has(key)) {
+				dataMap.set(key, { total: 0, userCounts: {} });
+			}
+
+			const bucket = dataMap.get(key)!;
+			bucket.total += 1;
+
+			if (msg.from) {
+				bucket.userCounts[msg.from] = (bucket.userCounts[msg.from] || 0) + 1;
+			}
+		});
+
+		// 3. Generate Labels and Fill Arrays (Handle continuity)
+		const labels: string[] = [];
+		// Dataset arrays
+		const totalData: number[] = [];
+		// Arrays for top users
+		const userData: Record<string, number[]> = {};
+		topUsers.forEach((user) => (userData[user] = []));
+
+		// Loop variables
+		let current = new Date(minDate);
+		current.setHours(0, 0, 0, 0);
+
+		const end = new Date(maxDate);
+		end.setHours(0, 0, 0, 0);
+
+		// Helper to advance time
+		const advanceTime = (d: Date) => {
+			if (isWeekly) {
+				d.setDate(d.getDate() + 7);
+			} else {
+				d.setDate(d.getDate() + 1);
+			}
 		};
+
+		while (current <= end) {
+			const key = isWeekly ? formatKeyDate(getWeekStart(current)) : formatKeyDate(current);
+			const bucket = dataMap.get(key);
+
+			labels.push(formatLabelDate(current));
+			totalData.push(bucket ? bucket.total : 0);
+
+			// Push data for each top user (0 if not present in bucket)
+			topUsers.forEach((user) => {
+				userData[user].push(bucket?.userCounts[user] || 0);
+			});
+
+			advanceTime(current);
+		}
+
+		// 4. Construct Datasets for Chart.js
+		const datasets = [
+			// Total Dataset (Thicker, filled, primary color)
+			{
+				label: 'Total Messages',
+				data: totalData,
+				borderColor: COLORS[0],
+				borderWidth: 2.5,
+				pointRadius: 0,
+				pointHoverRadius: 6,
+				order: 0, // Draw on top
+			},
+			// Top Users Datasets (Thinner, dashed, distinct colors)
+			...topUsers.map((userName, index) => ({
+				label: userName,
+				data: userData[userName],
+				borderColor: COLORS[index + 1] || COLORS[0],
+				borderWidth: 2,
+				pointRadius: 0,
+				pointHoverRadius: 5,
+				order: index + 1,
+			})),
+		];
+
+		return { labels, datasets, topUsers };
 	};
 
 	// Chart configuration
@@ -99,28 +212,26 @@ export default function MessageTimelineChart({ messages, className }: MessageTim
 			chartInstance.current.destroy();
 		}
 
-		const { labels, data } = processChartData();
-		const hasData = data.length > 0;
+		const { labels, datasets } = processChartData();
+		const hasData = labels.length > 0;
 
 		if (!hasData) return;
 
+		const isAllTime = timeRange === 'all';
+
 		const config: ChartConfiguration = {
-			type: 'bar',
+			type: 'line',
 			data: {
 				labels,
-				datasets: [
-					{
-						label: 'Messages',
-						data,
-						backgroundColor: COLORS[0], // Use primary color
-						borderRadius: 4,
-						hoverBackgroundColor: '#8f0f31',
-					},
-				],
+				datasets,
 			},
 			options: {
 				responsive: true,
 				maintainAspectRatio: false,
+				interaction: {
+					mode: 'index',
+					intersect: false,
+				},
 				scales: {
 					y: {
 						beginAtZero: true,
@@ -138,26 +249,35 @@ export default function MessageTimelineChart({ messages, className }: MessageTim
 						},
 						ticks: {
 							font: { family: "'Segoe UI', sans-serif" },
+							autoSkip: true,
+							maxTicksLimit: isAllTime ? 12 : undefined,
 						},
 					},
 				},
 				plugins: {
 					legend: {
-						display: false,
+						display: true, // Enable legend for multiple lines
+						position: 'bottom',
+						labels: {
+							usePointStyle: true,
+							boxWidth: 8,
+							font: { family: "'Segoe UI', sans-serif", size: 16 },
+							filter: (item) => item.text !== 'Total Messages' || !isAllTime,
+							// Optional: Keep Total in legend always? Let's keep it.
+						},
 					},
 					tooltip: {
 						backgroundColor: 'rgba(0, 0, 0, 0.8)',
 						padding: 12,
-						cornerRadius: 6,
+						cornerRadius: 4,
 						titleFont: { size: 14, family: "'Segoe UI', sans-serif" },
-						bodyFont: { size: 14, family: "'Segoe UI', sans-serif" },
-						displayColors: false,
+						bodyFont: { size: 13, family: "'Segoe UI', sans-serif" },
+						displayColors: true,
 						callbacks: {
 							title: (tooltipItems) => {
-								return `Date: ${tooltipItems[0].label}`;
-							},
-							label: (context) => {
-								return `Messages: ${context.raw}`;
+								return isAllTime
+									? `Week of: ${tooltipItems[0].label}`
+									: `Date: ${tooltipItems[0].label}`;
 							},
 						},
 					},
@@ -191,17 +311,29 @@ export default function MessageTimelineChart({ messages, className }: MessageTim
 		setTimeRange(newRange);
 	};
 
-	const { labels, data } = processChartData();
-	const totalMessagesInRange = data.reduce((acc, curr) => acc + curr, 0);
+	// Calculate Total from the processed data (Dataset 0 is always Total)
+	const { datasets, labels } = processChartData();
+	const totalMessagesInRange =
+		datasets.length > 0 && datasets[0].data
+			? (datasets[0].data as number[]).reduce((acc, curr) => acc + curr, 0)
+			: 0;
+
+	const getTitle = (timeRange: string) => {
+		if (timeRange === 'all') return 'All Time';
+		return timeRange.charAt(0).toUpperCase() + timeRange.slice(1);
+	};
+
+	const isWide = timeRange === 'month' || timeRange === 'all';
+	const cardWidthClass = isWide ? styles.wideCard : '';
 
 	return (
-		<DsCard padding="lg" shadow="sm" className={className}>
+		<DsCard padding="lg" shadow="sm" className={`${className} ${cardWidthClass}`}>
 			{/* Header */}
 			<div className={styles.header}>
 				<h3 className={styles.title}>Message Activity</h3>
 
 				<div className={styles.controls}>
-					{(['week', 'month', 'year'] as TimeRange[]).map((range) => (
+					{(['week', 'month', 'year', 'all'] as TimeRange[]).map((range) => (
 						<button
 							key={range}
 							onClick={() => handleRangeChange(range)}
@@ -209,7 +341,7 @@ export default function MessageTimelineChart({ messages, className }: MessageTim
 								timeRange === range ? styles.rangeButtonActive : ''
 							}`}
 						>
-							{range.charAt(0).toUpperCase() + range.slice(1)}
+							{range === 'all' ? 'All Time' : getTitle(range)}
 						</button>
 					))}
 				</div>
@@ -217,13 +349,15 @@ export default function MessageTimelineChart({ messages, className }: MessageTim
 
 			{/* Summary Stats */}
 			<div className={styles.summary}>
-				<DsTag variant="default">Timeframe: {timeRange}</DsTag>
+				<DsTag variant="default">
+					{timeRange === 'all' ? 'Full History' : `Timeframe: ${timeRange}`}
+				</DsTag>
 				<DsTag variant="accent">Total: {totalMessagesInRange.toLocaleString()}</DsTag>
 			</div>
 
 			{/* Chart Area */}
 			<div className={styles.chartWrapper}>
-				{data.length === 0 ? (
+				{labels.length === 0 ? (
 					<div className={styles.emptyState}>
 						<p>No messages found in the selected time range.</p>
 					</div>
@@ -232,7 +366,7 @@ export default function MessageTimelineChart({ messages, className }: MessageTim
 						<canvas
 							ref={canvasRef}
 							width={1000}
-							aria-label={`Bar chart showing messages per day for the past ${timeRange}`}
+							aria-label={`Line chart showing message trends ${timeRange === 'all' ? 'per week' : 'per day'} for ${timeRange}`}
 						/>
 					</div>
 				)}
