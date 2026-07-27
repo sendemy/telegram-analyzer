@@ -1,12 +1,7 @@
 import { useState } from 'preact/hooks';
+import type { PersonStats, ProcessedData, TelegramData, TelegramMessage } from '../types/telegram';
 import { getGlobalStats, getPersonStats, sortData } from '../utils/analyzers';
-import type {
-	TelegramData,
-	ProcessedData,
-	GlobalStats,
-	PersonStats,
-	TelegramMessage,
-} from '../types/telegram';
+import { computePersonalityProfiles } from '../utils/personality';
 
 export function useChatData() {
 	const [processedData, setProcessedData] = useState<ProcessedData | null>(null);
@@ -35,13 +30,21 @@ export function useChatData() {
 			// Step 5: Get top words
 			const topWords = sortData(rawData.messages);
 
-			// Step 6: Update state with all processed data
+			// Step 6: Compute personality profiles
+			const personalityProfiles = computePersonalityProfiles(
+				rawData.messages,
+				nicknames,
+				personsStats
+			);
+
+			// Step 7: Update state with all processed data
 			setProcessedData({
 				totalStats,
 				personsStats,
 				chartObjects,
 				topWords,
 				nicknames,
+				personalityProfiles,
 			});
 		} catch (err) {
 			console.error('Error processing chat data:', err);

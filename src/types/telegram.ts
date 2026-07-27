@@ -35,6 +35,42 @@ export interface ProcessedData {
 	chartObjects: Array<Record<string, number>>;
 	topWords: Record<string, number>;
 	nicknames: string[];
+	personalityProfiles?: PersonalityProfile[];
+}
+
+// ============================================
+// Personality Insights Types
+// ============================================
+
+export type CommunicationStyle = 'very-short' | 'short' | 'moderate' | 'long' | 'very-long';
+
+export type ActivityPeriod = 'night' | 'morning' | 'afternoon' | 'evening';
+
+export interface FillerWordStat {
+	word: string;
+	count: number;
+	perMessage: number;
+}
+
+export interface PersonalityProfile {
+	nickname: string;
+	communicationStyle: CommunicationStyle;
+	avgMessageLength: number;
+	medianMessageLength: number;
+	avgWordsPerMessage: number;
+	maxMessageLength: number;
+	messageLengthVariance: number;
+	mediaPersonalityLabel: string;
+	stickerRatio: number;
+	gifRatio: number;
+	mediaRatio: number;
+	mostActivePeriod: ActivityPeriod;
+	periodBreakdown: Record<ActivityPeriod, number>;
+	nightOwlScore: number;
+	topFillerWords: FillerWordStat[];
+	totalFillers: number;
+	fillerWordsPerMessage: number;
+	shortInsights: string[];
 }
 
 // ============================================
@@ -93,4 +129,40 @@ export interface SentimentInsights {
 	dailySentiment: DailySentiment[];
 	mostPositiveMessages: HighlightMessage[];
 	mostNegativeMessages: HighlightMessage[];
+}
+
+// ============================================
+// Predictive Analytics Types
+// ============================================
+
+export interface MilestonePrediction {
+	milestone: number;
+	predictedDate: string | null;
+	confidence: 'high' | 'medium' | 'low';
+}
+
+export interface MonthlyComparison {
+	nickname: string;
+	currentMonthCount: number;
+	previousMonthCount: number;
+	changePercent: number;
+}
+
+export interface DeadHour {
+	hour: number;
+	count: number;
+	label: string;
+}
+
+export interface PredictiveInsights {
+	totalMessages: number;
+	historicalCumulative: Array<{ date: string; count: number }>;
+	projectedCumulative: Array<{ date: string; count: number }>;
+	milestones: MilestonePrediction[];
+	growthRate: number;
+	rSquared: number;
+	monthlyComparisons: MonthlyComparison[];
+	deadHours: DeadHour[];
+	deadestHour: DeadHour;
+	liveliestHour: DeadHour;
 }

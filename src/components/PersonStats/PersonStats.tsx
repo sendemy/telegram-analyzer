@@ -1,7 +1,13 @@
 import { usePersonActivity } from '../../hooks/useActivity';
-import { GlobalStats, PersonSentiment, PersonStats as PersonStatsType } from '../../types/telegram';
+import {
+	GlobalStats,
+	PersonSentiment,
+	PersonStats as PersonStatsType,
+	PersonalityProfile as PersonalityProfileType,
+} from '../../types/telegram';
 import { COLORS } from '../../utils/constants';
 import { capitalize } from '../../utils/strings';
+import PersonalityProfile from '../PersonalityProfile';
 import DsCard from '../ui/DsCard';
 import DsTag from '../ui/DsTag';
 import styles from './PersonStats.module.scss';
@@ -13,7 +19,9 @@ interface PersonStatsProps {
 	showVisualIndicators?: boolean;
 	showActivityScore?: boolean;
 	showSentiment?: boolean;
+	showPersonality?: boolean;
 	sentiment?: PersonSentiment | null;
+	personality?: PersonalityProfileType | null;
 	className?: string;
 }
 
@@ -24,7 +32,9 @@ export default function PersonStats({
 	showVisualIndicators = false,
 	showActivityScore = true,
 	showSentiment = true,
+	showPersonality = true,
 	sentiment,
+	personality,
 	className,
 }: PersonStatsProps) {
 	const activity = usePersonActivity({
@@ -209,6 +219,9 @@ export default function PersonStats({
 						</div>
 					);
 				})()}
+
+			{/* Personality Profile */}
+			{showPersonality && personality && <PersonalityProfile profile={personality} />}
 		</DsCard>
 	);
 }

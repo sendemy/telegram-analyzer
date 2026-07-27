@@ -1,0 +1,149 @@
+@use '../../styles/design-system' as ds;
+
+.profile {
+	margin-top: ds.$spacing-4;
+	padding-top: ds.$spacing-4;
+	border-top: 1px solid ds.$color-neutral-200;
+}
+
+.title {
+	margin: 0 0 ds.$spacing-3;
+	@include ds.text-sm;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(600, color);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+// 2x2 grid of trait cards
+.grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: ds.$spacing-3;
+	margin-bottom: ds.$spacing-3;
+}
+
+.traitCard {
+	background: ds.$color-neutral-50;
+	border: 1px solid ds.$color-neutral-200;
+	@include ds.rounded-lg;
+	padding: ds.$spacing-3;
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-2;
+}
+
+.traitHeader {
+	display: flex;
+	align-items: center;
+	gap: ds.$spacing-2;
+}
+
+.traitIcon {
+	font-size: 1.1rem;
+	line-height: 1;
+}
+
+.traitLabel {
+	@include ds.text-xs;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(500, color);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.traitValue {
+	@include ds.text-sm;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(800, color);
+	line-height: 1.3;
+}
+
+.traitStats {
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-1;
+	@include ds.text-xs;
+	@include ds.color-neutral(500, color);
+}
+
+// Period breakdown bar
+.periodBar {
+	display: flex;
+	height: 8px;
+	@include ds.rounded-full;
+	overflow: hidden;
+	gap: 2px;
+}
+
+.periodSegment {
+	height: 100%;
+	border-radius: 0;
+	transition: width ds.$transition-normal;
+
+	&:first-child {
+		border-radius: ds.$border-radius-full 0 0 ds.$border-radius-full;
+	}
+
+	&:last-child {
+		border-radius: 0 ds.$border-radius-full ds.$border-radius-full 0;
+	}
+}
+
+// Filler words
+.fillerList {
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-2;
+}
+
+.fillerRow {
+	display: flex;
+	align-items: center;
+	gap: ds.$spacing-2;
+}
+
+.fillerWord {
+	@include ds.text-xs;
+	@include ds.font-weight(medium);
+	@include ds.color-neutral(700, color);
+	min-width: 45px;
+	font-style: italic;
+}
+
+.fillerBarTrack {
+	flex: 1;
+	height: 6px;
+	@include ds.progress-bar-base;
+}
+
+.fillerBarFill {
+	height: 100%;
+	border-radius: inherit;
+	background: ds.$color-primary;
+	@include ds.transition-all('normal');
+	min-width: 2px;
+}
+
+.fillerCount {
+	@include ds.text-xs;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(600, color);
+	font-family: ds.$font-family-mono;
+	min-width: 32px;
+	text-align: right;
+}
+
+// Insights tags
+.insights {
+	display: flex;
+	flex-wrap: wrap;
+	gap: ds.$spacing-2;
+}
+
+// Responsive
+@include ds.breakpoint-md {
+	.grid {
+		grid-template-columns: 1fr;
+	}
+}

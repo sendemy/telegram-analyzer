@@ -1228,6 +1228,10 @@ section {
 	width: 100%;
 }
 
+.predictive-section {
+	width: 100%;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
 	width: 10px;

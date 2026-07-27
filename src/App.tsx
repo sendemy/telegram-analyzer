@@ -4,6 +4,7 @@ import GlobalStats from './components/GlobalStats/GlobalStats';
 import Layout from './components/Layout';
 import MessageTimelineChart from './components/MessageTimelineChart/MessageTimelineChart';
 import PersonStats from './components/PersonStats/PersonStats';
+import PredictiveChart from './components/PredictiveChart';
 import SentimentChart from './components/SentimentChart/SentimentChart';
 import SentimentOverview from './components/SentimentOverview/SentimentOverview';
 import StatsChart from './components/StatsChart';
@@ -178,6 +179,11 @@ export default function App() {
 												(ps) => ps.nickname === person.nickname
 											) ?? null
 										}
+										personality={
+											processedData.personalityProfiles?.find(
+												(p) => p.nickname === person.nickname
+											) ?? null
+										}
 									/>
 								))}
 							</div>
@@ -252,6 +258,22 @@ export default function App() {
 								<h2>📉 Mood Timeline</h2>
 							</div>
 							<SentimentChart data={sentimentInsights.dailySentiment} />
+						</section>
+					)}
+
+					{/* Predictive Analytics */}
+					{rawData && processedData && (
+						<section className="predictive-section">
+							<div className="section-header">
+								<h2>📈 Predictive Analytics</h2>
+								<DsTag variant="accent" size="lg">
+									trending
+								</DsTag>
+							</div>
+							<PredictiveChart
+								messages={rawData.messages}
+								nicknames={processedData.nicknames}
+							/>
 						</section>
 					)}
 

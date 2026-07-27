@@ -1,0 +1,268 @@
+@use '../../styles/design-system' as ds;
+
+// Chart header
+.chartHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: ds.$spacing-4;
+	flex-wrap: wrap;
+	gap: ds.$spacing-3;
+}
+
+.chartTitle {
+	margin: 0;
+	@include ds.text-xl;
+	@include ds.font-weight(bold);
+	@include ds.color-neutral(900, color);
+}
+
+.horizonControls {
+	display: flex;
+	background: ds.$color-neutral-100;
+	padding: 4px;
+	@include ds.rounded-lg;
+	gap: 4px;
+}
+
+.horizonBtn {
+	border: none;
+	background: transparent;
+	padding: ds.$spacing-2 ds.$spacing-4;
+	@include ds.text-sm;
+	@include ds.font-weight(medium);
+	@include ds.color-neutral(600, color);
+	cursor: pointer;
+	@include ds.rounded-md;
+	@include ds.transition-all('fast');
+
+	&:hover {
+		@include ds.color-neutral(900, color);
+		background: rgba(255, 255, 255, 0.5);
+	}
+}
+
+.horizonActive {
+	background: #fff;
+	@include ds.color-neutral(900, color);
+	@include ds.font-weight(semibold);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+// Chart wrapper
+.chartWrapper {
+	position: relative;
+	width: 100%;
+	height: 400px;
+
+	> canvas {
+		display: block;
+		width: 100% !important;
+		max-width: 100%;
+	}
+}
+
+// Stats row below chart
+.statsRow {
+	display: flex;
+	gap: ds.$spacing-6;
+	margin-top: ds.$spacing-4;
+	padding-top: ds.$spacing-4;
+	border-top: 1px solid ds.$color-neutral-200;
+	flex-wrap: wrap;
+}
+
+.statItem {
+	@include ds.text-sm;
+	@include ds.color-neutral(500, color);
+
+	strong {
+		@include ds.font-weight(semibold);
+		@include ds.color-neutral(800, color);
+	}
+}
+
+// Sections
+.section {
+	margin-top: ds.$spacing-4;
+	padding-top: ds.$spacing-4;
+	border-top: 1px solid ds.$color-neutral-200;
+}
+
+.sectionTitle {
+	margin: 0 0 ds.$spacing-3;
+	@include ds.text-base;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(700, color);
+}
+
+// Empty state
+.emptyState {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 200px;
+	background: ds.$color-neutral-50;
+	@include ds.rounded-lg;
+	border: 1px dashed ds.$color-neutral-300;
+	color: ds.$color-neutral-500;
+	@include ds.text-sm;
+	text-align: center;
+	padding: ds.$spacing-6;
+}
+
+// Milestones
+.milestones {
+	display: flex;
+	gap: ds.$spacing-4;
+	flex-wrap: wrap;
+}
+
+.milestoneCard {
+	flex: 1;
+	min-width: 140px;
+	background: ds.$color-neutral-50;
+	border: 1px solid ds.$color-neutral-200;
+	@include ds.rounded-lg;
+	padding: ds.$spacing-3;
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-1;
+	align-items: center;
+	text-align: center;
+}
+
+.milestoneValue {
+	@include ds.text-xl;
+	@include ds.font-weight(bold);
+	@include ds.color-primary(color);
+	font-family: ds.$font-family-mono;
+}
+
+.milestoneDate {
+	@include ds.text-sm;
+	@include ds.color-neutral(600, color);
+}
+
+.milestoneConfidence {
+	font-size: 1.2rem;
+	line-height: 1;
+}
+
+// Monthly comparisons
+.monthlyGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: ds.$spacing-3;
+}
+
+.monthlyCard {
+	background: ds.$color-neutral-50;
+	border: 1px solid ds.$color-neutral-200;
+	@include ds.rounded-lg;
+	padding: ds.$spacing-3;
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-2;
+}
+
+.monthlyHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: ds.$spacing-2;
+}
+
+.monthlyName {
+	@include ds.text-sm;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(800, color);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.monthlyChange {
+	@include ds.text-sm;
+	@include ds.font-weight(bold);
+	white-space: nowrap;
+}
+
+.changePositive {
+	color: ds.$color-secondary;
+}
+
+.changeNegative {
+	color: ds.$color-error;
+}
+
+.monthlyDetail {
+	@include ds.text-xs;
+	@include ds.color-neutral(500, color);
+}
+
+// Dead hours
+.deadHoursGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: ds.$spacing-4;
+}
+
+.deadHourCard {
+	background: ds.$color-neutral-50;
+	border: 1px solid ds.$color-neutral-200;
+	@include ds.rounded-lg;
+	padding: ds.$spacing-3;
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-1;
+}
+
+.deadHourLabel {
+	@include ds.text-xs;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(500, color);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.deadHourValue {
+	@include ds.text-base;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(800, color);
+}
+
+.deadHourNote {
+	@include ds.text-xs;
+	@include ds.color-neutral(400, color);
+}
+
+// Responsive
+@include ds.breakpoint-md {
+	.chartHeader {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.chartWrapper {
+		height: 300px;
+	}
+
+	.deadHoursGrid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 767px) {
+	.chartWrapper {
+		height: 250px;
+	}
+
+	.milestones {
+		flex-direction: column;
+	}
+
+	.statsRow {
+		gap: ds.$spacing-3;
+	}
+}
