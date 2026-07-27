@@ -17,6 +17,12 @@
 		"prettier": "^3.7.4",
 		"sentiment": "^5.0.2"
 	},
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"@parcel/watcher",
+			"esbuild"
+		]
+	},
 	"devDependencies": {
 		"@preact/preset-vite": "^2.10.2",
 		"@types/sentiment": "^5.0.4",
