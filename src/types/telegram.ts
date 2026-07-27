@@ -36,3 +36,61 @@ export interface ProcessedData {
 	topWords: Record<string, number>;
 	nicknames: string[];
 }
+
+// ============================================
+// Sentiment Analysis Types
+// ============================================
+
+export interface SentimentScore {
+	score: number;
+	comparative: number;
+	positive: string[];
+	negative: string[];
+	words: string[];
+}
+
+export interface HighlightMessage {
+	text: string;
+	from: string;
+	score: number;
+}
+
+export interface PersonSentiment {
+	nickname: string;
+	avgScore: number;
+	avgComparative: number;
+	totalPositive: number;
+	totalNegative: number;
+	totalNeutral: number;
+	messageCount: number;
+	mostPositiveMessages: { text: string; score: number }[];
+	mostNegativeMessages: { text: string; score: number }[];
+	sentimentLabel: SentimentLabel;
+}
+
+export type SentimentLabel =
+	| 'very-positive'
+	| 'positive'
+	| 'neutral'
+	| 'negative'
+	| 'very-negative';
+
+export interface DailySentiment {
+	date: string;
+	score: number;
+	comparative: number;
+	count: number;
+}
+
+export interface SentimentInsights {
+	overallScore: number;
+	overallComparative: number;
+	overallLabel: SentimentLabel;
+	positivityRate: number;
+	negativityRate: number;
+	neutralityRate: number;
+	personSentiments: PersonSentiment[];
+	dailySentiment: DailySentiment[];
+	mostPositiveMessages: HighlightMessage[];
+	mostNegativeMessages: HighlightMessage[];
+}

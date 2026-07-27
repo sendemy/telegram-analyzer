@@ -1,8 +1,9 @@
 import { usePersonActivity } from '../../hooks/useActivity';
-import { GlobalStats, PersonStats as PersonStatsType } from '../../types/telegram';
+import { GlobalStats, PersonSentiment, PersonStats as PersonStatsType } from '../../types/telegram';
 import { COLORS } from '../../utils/constants';
 import { capitalize } from '../../utils/strings';
 import DsCard from '../ui/DsCard';
+import DsTag from '../ui/DsTag';
 import styles from './PersonStats.module.scss';
 
 interface PersonStatsProps {
@@ -11,6 +12,8 @@ interface PersonStatsProps {
 	index?: number;
 	showVisualIndicators?: boolean;
 	showActivityScore?: boolean;
+	showSentiment?: boolean;
+	sentiment?: PersonSentiment | null;
 	className?: string;
 }
 
@@ -20,6 +23,8 @@ export default function PersonStats({
 	index = 0,
 	showVisualIndicators = false,
 	showActivityScore = true,
+	showSentiment = true,
+	sentiment,
 	className,
 }: PersonStatsProps) {
 	const activity = usePersonActivity({
@@ -143,6 +148,67 @@ export default function PersonStats({
 					</div>
 				</div>
 			)}
+
+			{/* Sentiment section — pos vs neg as proportion of emotional messages only */}
+			{showSentiment &&
+				sentiment &&
+				(() => {
+					const emotionalCount = sentiment.totalPositive + sentiment.totalNegative;
+					const posPct =
+						emotionalCount > 0 ? (sentiment.totalPositive / emotionalCount) * 100 : 50;
+					const negPct =
+						emotionalCount > 0 ? (sentiment.totalNegative / emotionalCount) * 100 : 50;
+
+					return (
+						<div className={styles.sentimentSection}>
+							<h4 className={styles.sentimentTitle}>Sentiment</h4>
+							<div className={styles.sentimentBadgeRow}>
+								<DsTag
+									variant={
+										sentiment.sentimentLabel === 'very-positive' ||
+										sentiment.sentimentLabel === 'positive'
+											? 'success'
+											: sentiment.sentimentLabel === 'negative' ||
+												  sentiment.sentimentLabel === 'very-negative'
+												? 'error'
+												: 'default'
+									}
+									size="sm"
+								>
+									{sentiment.sentimentLabel.replace('-', ' ')}
+								</DsTag>
+								<span className={styles.sentimentScore}>
+									{sentiment.avgComparative >= 0 ? '+' : ''}
+									{sentiment.avgComparative.toFixed(3)} avg
+								</span>
+							</div>
+							<div className={styles.sentimentBarRow}>
+								<span className={styles.sentimentBarLabel}>Pos</span>
+								<div className={styles.sentimentBarTrack}>
+									<div
+										className={styles.sentimentBarFillPos}
+										style={{ width: `${posPct}%` }}
+									/>
+								</div>
+								<span className={styles.sentimentBarValue}>
+									{posPct.toFixed(0)}%
+								</span>
+							</div>
+							<div className={styles.sentimentBarRow}>
+								<span className={styles.sentimentBarLabel}>Neg</span>
+								<div className={styles.sentimentBarTrack}>
+									<div
+										className={styles.sentimentBarFillNeg}
+										style={{ width: `${negPct}%` }}
+									/>
+								</div>
+								<span className={styles.sentimentBarValue}>
+									{negPct.toFixed(0)}%
+								</span>
+							</div>
+						</div>
+					);
+				})()}
 		</DsCard>
 	);
 }

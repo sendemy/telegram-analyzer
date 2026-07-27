@@ -14,10 +14,12 @@
 		"chart.js": "^4.5.1",
 		"clsx": "^2.1.1",
 		"preact": "^10.26.9",
-		"prettier": "^3.7.4"
+		"prettier": "^3.7.4",
+		"sentiment": "^5.0.2"
 	},
 	"devDependencies": {
 		"@preact/preset-vite": "^2.10.2",
+		"@types/sentiment": "^5.0.4",
 		"gh-pages": "^6.3.0",
 		"sass": "^1.96.0",
 		"typescript": "^5.9.3",
