@@ -185,6 +185,84 @@ h2 {
 	color: ds.$color-neutral-600 !important;
 }
 
+// Sentiment section
+.sentimentSection {
+	margin-top: ds.$spacing-4;
+	padding-top: ds.$spacing-4;
+	border-top: 1px solid ds.$color-neutral-200;
+}
+
+.sentimentTitle {
+	margin: 0 0 ds.$spacing-3;
+	@include ds.text-sm;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(600, color);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.sentimentBadgeRow {
+	display: flex;
+	align-items: center;
+	gap: ds.$spacing-3;
+	margin-bottom: ds.$spacing-3;
+}
+
+.sentimentScore {
+	@include ds.text-sm;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(700, color);
+	font-family: ds.$font-family-mono;
+}
+
+.sentimentBarRow {
+	display: flex;
+	align-items: center;
+	gap: ds.$spacing-2;
+	margin-bottom: ds.$spacing-2;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.sentimentBarLabel {
+	min-width: 30px;
+	@include ds.text-xs;
+	@include ds.font-weight(medium);
+	@include ds.color-neutral(500, color);
+}
+
+.sentimentBarTrack {
+	flex: 1;
+	height: 6px;
+	@include ds.progress-bar-base;
+}
+
+.sentimentBarFillPos {
+	height: 100%;
+	border-radius: inherit;
+	background-color: ds.$color-secondary;
+	@include ds.transition-all('normal');
+	min-width: 1px;
+}
+
+.sentimentBarFillNeg {
+	height: 100%;
+	border-radius: inherit;
+	background-color: ds.$color-error;
+	@include ds.transition-all('normal');
+	min-width: 1px;
+}
+
+.sentimentBarValue {
+	min-width: 36px;
+	text-align: right;
+	@include ds.text-xs;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(600, color);
+}
+
 // Responsive design
 @include ds.breakpoint-md {
 	// For tablets

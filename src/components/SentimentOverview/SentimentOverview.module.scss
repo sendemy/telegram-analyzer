@@ -1,0 +1,242 @@
+@use '../../styles/design-system' as ds;
+
+.overview {
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-6;
+}
+
+// Header with mood emoji and score
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: ds.$spacing-4;
+}
+
+.moodSection {
+	display: flex;
+	align-items: center;
+	gap: ds.$spacing-4;
+}
+
+.moodEmoji {
+	font-size: 3rem;
+	line-height: 1;
+	@include ds.animate-fade-in;
+}
+
+.moodInfo {
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-2;
+}
+
+.moodTitle {
+	margin: 0;
+	@include ds.text-lg;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(900, color);
+}
+
+.scoreSection {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: ds.$spacing-1;
+}
+
+.scoreValue {
+	@include ds.text-3xl;
+	@include ds.font-weight(bold);
+	@include ds.color-primary(color);
+}
+
+.scoreLabel {
+	@include ds.text-sm;
+	@include ds.color-neutral(500, color);
+}
+
+// Sentiment distribution bars
+.distribution {
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-3;
+}
+
+.distributionHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: ds.$spacing-2;
+	flex-wrap: wrap;
+}
+
+.sectionTitle {
+	margin: 0;
+	@include ds.text-base;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(700, color);
+}
+
+.neutralNote {
+	@include ds.text-xs;
+	@include ds.color-neutral(400, color);
+	white-space: nowrap;
+}
+
+.bars {
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-3;
+}
+
+.barRow {
+	display: flex;
+	align-items: center;
+	gap: ds.$spacing-3;
+}
+
+.barLabel {
+	min-width: 70px;
+	@include ds.text-sm;
+	@include ds.font-weight(medium);
+	@include ds.color-neutral(600, color);
+}
+
+.barTrack {
+	flex: 1;
+	height: 10px;
+	@include ds.progress-bar-base;
+}
+
+.barFill {
+	height: 100%;
+	border-radius: inherit;
+	@include ds.transition-all('normal');
+	min-width: 2px;
+}
+
+.barPositive {
+	background-color: ds.$color-secondary;
+}
+
+.barNeutral {
+	background-color: ds.$color-neutral-300;
+}
+
+.barNegative {
+	background-color: ds.$color-error;
+}
+
+.barValue {
+	min-width: 48px;
+	text-align: right;
+	@include ds.text-sm;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(700, color);
+}
+
+// Highlights section
+.highlights {
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-3;
+}
+
+.highlightsGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: ds.$spacing-4;
+
+	@include ds.breakpoint-md {
+		grid-template-columns: 1fr;
+	}
+}
+
+.highlightColumn {
+	display: flex;
+	flex-direction: column;
+	gap: ds.$spacing-3;
+}
+
+.highlightColumnTitle {
+	margin: 0;
+	@include ds.text-base;
+	@include ds.font-weight(semibold);
+	@include ds.color-neutral(700, color);
+}
+
+.highlightCard {
+	padding: ds.$spacing-3;
+	@include ds.rounded-lg;
+	border-left: 4px solid transparent;
+	@include ds.transition-all('fast');
+
+	&:hover {
+		@include ds.shadow('md');
+	}
+}
+
+.highlightPositive {
+	background-color: #f0fdf4;
+	border-left-color: ds.$color-secondary;
+}
+
+.highlightNegative {
+	background-color: #fef2f2;
+	border-left-color: ds.$color-error;
+}
+
+.highlightHeader {
+	display: flex;
+	align-items: center;
+	gap: ds.$spacing-2;
+	margin-bottom: ds.$spacing-1;
+}
+
+.highlightRank {
+	@include ds.text-xs;
+	@include ds.font-weight(bold);
+	@include ds.color-neutral(400, color);
+	font-family: ds.$font-family-mono;
+	min-width: 20px;
+}
+
+.highlightAuthor {
+	@include ds.text-xs;
+	@include ds.font-weight(medium);
+	@include ds.color-primary(color);
+	flex: 1;
+}
+
+.highlightText {
+	margin: 0;
+	@include ds.text-sm;
+	@include ds.color-neutral(600, color);
+	line-height: ds.$line-height-relaxed;
+	font-style: italic;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+// Responsive
+@include ds.breakpoint-md {
+	.header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.scoreSection {
+		align-items: flex-start;
+	}
+}
+
+@media (max-width: 480px) {
+	.moodEmoji {
+		font-size: 2.5rem;
+	}
+}

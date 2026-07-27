@@ -1,16 +1,19 @@
 import { useState } from 'preact/hooks';
-import Layout from './components/Layout';
 import FileUpload from './components/FileUpload';
 import GlobalStats from './components/GlobalStats/GlobalStats';
+import Layout from './components/Layout';
+import MessageTimelineChart from './components/MessageTimelineChart/MessageTimelineChart';
 import PersonStats from './components/PersonStats/PersonStats';
+import SentimentChart from './components/SentimentChart/SentimentChart';
+import SentimentOverview from './components/SentimentOverview/SentimentOverview';
 import StatsChart from './components/StatsChart';
+import TopWords from './components/TopWords/TopWords';
+import DsButton from './components/ui/DsButton';
+import DsTag from './components/ui/DsTag';
 import { useChatData } from './hooks/useChatData';
+import { useSentiment } from './hooks/useSentiment';
 import { TelegramData } from './types/telegram';
 import { STAT_KEYS } from './utils/constants';
-import TopWords from './components/TopWords/TopWords';
-import DsTag from './components/ui/DsTag';
-import DsButton from './components/ui/DsButton';
-import MessageTimelineChart from './components/MessageTimelineChart/MessageTimelineChart';
 
 // Loading component for better UX
 function LoadingSpinner() {
@@ -56,6 +59,10 @@ function EmptyState() {
 					<span className="feature-icon">🔤</span>
 					<span>Word Frequency</span>
 				</div>
+				<div className="feature">
+					<span className="feature-icon">😊</span>
+					<span>Sentiment Analysis</span>
+				</div>
 			</div>
 		</div>
 	);
@@ -65,6 +72,7 @@ export default function App() {
 	const [uploadError, setUploadError] = useState<string | null>(null);
 	const [rawData, setRawData] = useState<TelegramData | null>(null);
 	const { processedData, isLoading, error, processChatData, resetData } = useChatData();
+	const sentimentInsights = useSentiment(rawData?.messages ?? null);
 
 	const handleFileUpload = async (fileData: TelegramData) => {
 		setUploadError(null);
@@ -165,6 +173,11 @@ export default function App() {
 										total={processedData.totalStats}
 										index={index}
 										showVisualIndicators={true}
+										sentiment={
+											sentimentInsights?.personSentiments.find(
+												(ps) => ps.nickname === person.nickname
+											) ?? null
+										}
 									/>
 								))}
 							</div>
@@ -201,7 +214,7 @@ export default function App() {
 							<div className="section-header">
 								<h2>Message Activity</h2>
 							</div>
-							<MessageTimelineChart messages={rawData.messages} />
+							<MessageTimelineChart messages={rawData!.messages} />
 						</section>
 					)}
 
@@ -219,6 +232,28 @@ export default function App() {
 								/>
 							</section>
 						)}
+
+					{/* Sentiment Analysis */}
+					{sentimentInsights && (
+						<section className="sentiment-container">
+							<div className="section-header">
+								<h2>😊 Sentiment Analysis</h2>
+								<DsTag variant="accent" size="lg">
+									{sentimentInsights.overallLabel.replace('-', ' ')} mood
+								</DsTag>
+							</div>
+							<SentimentOverview data={sentimentInsights} />
+						</section>
+					)}
+
+					{sentimentInsights && sentimentInsights.dailySentiment.length > 0 && (
+						<section className="timeline-section">
+							<div className="section-header">
+								<h2>📉 Mood Timeline</h2>
+							</div>
+							<SentimentChart data={sentimentInsights.dailySentiment} />
+						</section>
+					)}
 
 					{/* Additional Insights */}
 					<section className="insights-container">
